@@ -71,78 +71,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 // ─── HTTP transport (production) ─────────────────────────────────────────────
 
 /**
- * Sends MCP JSON-RPC requests to the remote server over HTTP.
- *
- * The Streamable HTTP transport expects standard JSON-RPC messages
- * posted to the /mcp endpoint. We send initialize + initialized + tools/call
- * in sequence, same as the stdio handshake but over HTTP.
+ * Calls the remote MCP server's direct /tools/call endpoint.
+ * This bypasses the MCP JSON-RPC handshake (initialize/initialized)
+ * which doesn't work in stateless mode where each request creates
+ * a fresh server instance. The /tools/call endpoint dispatches
+ * directly to tool functions and returns JSON.
  */
 async function callMcpToolHttp(
   tool: string,
   args: Record<string, unknown>,
 ): Promise<unknown> {
-  // Step 1: Initialize
-  const initRes = await fetch(MCP_SERVER_URL!, {
+  // MCP_SERVER_URL points to .../mcp — replace with /tools/call
+  const baseUrl = MCP_SERVER_URL!.replace(/\/mcp$/, '');
+  const res = await fetch(`${baseUrl}/tools/call`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'initialize',
-      params: {
-        protocolVersion: '2024-11-05',
-        capabilities: {},
-        clientInfo: { name: 'accidental-recipes', version: '0.1.0' },
-      },
-    }),
+    body: JSON.stringify({ tool, args }),
   });
 
-  if (!initRes.ok) {
-    throw new Error(`MCP initialize failed: ${initRes.status} ${initRes.statusText}`);
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`MCP tools/call failed: ${res.status} ${res.statusText}: ${body}`);
   }
 
-  // Step 2: Send initialized notification
-  await fetch(MCP_SERVER_URL!, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      method: 'notifications/initialized',
-    }),
-  });
-
-  // Step 3: Call the tool
-  const toolRes = await fetch(MCP_SERVER_URL!, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: 2,
-      method: 'tools/call',
-      params: { name: tool, arguments: args },
-    }),
-  });
-
-  if (!toolRes.ok) {
-    throw new Error(`MCP tools/call failed: ${toolRes.status} ${toolRes.statusText}`);
-  }
-
-  const msg = (await toolRes.json()) as JsonRpcResponse;
-
-  if (msg.error) {
-    throw new Error(msg.error.message);
-  }
-
-  const textContent = msg.result?.content?.find((c) => c.type === 'text');
-  if (!textContent) {
-    throw new Error('Tool response had no text content');
-  }
-
-  try {
-    return JSON.parse(textContent.text);
-  } catch {
-    return textContent.text;
-  }
+  return res.json();
 }
 
 // ─── stdio transport (local dev) ─────────────────────────────────────────────
