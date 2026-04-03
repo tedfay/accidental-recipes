@@ -36,7 +36,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function IngredientPage({ params }: PageProps) {
   const { wikidataId } = await params;
-  const ingredient = await getIngredient(wikidataId);
+
+  let ingredient: Awaited<ReturnType<typeof getIngredient>> | null = null;
+  try {
+    ingredient = await getIngredient(wikidataId);
+  } catch {
+    notFound();
+  }
 
   if (!ingredient?.name) {
     notFound();

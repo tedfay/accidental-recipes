@@ -25,7 +25,13 @@ export const metadata: Metadata = {
 };
 
 export default async function IngredientsPage() {
-  const ingredients = await listIngredients();
+  let ingredients: Awaited<ReturnType<typeof listIngredients>> = [];
+
+  try {
+    ingredients = await listIngredients();
+  } catch {
+    // MCP server unreachable at build time — render with empty data.
+  }
 
   const sorted = [...ingredients].sort((a, b) =>
     a.name.localeCompare(b.name),
