@@ -19,15 +19,19 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { wikidataId } = await params;
-  const ingredient = await getIngredient(wikidataId);
-  if (!ingredient?.name) return {};
+  try {
+    const { wikidataId } = await params;
+    const ingredient = await getIngredient(wikidataId);
+    if (!ingredient?.name) return {};
 
-  const displayName = formatDisplayName(ingredient);
-  return {
-    title: displayName,
-    description: `${displayName} — entity page with linked recipes and Wikidata context.`,
-  };
+    const displayName = formatDisplayName(ingredient);
+    return {
+      title: displayName,
+      description: `${displayName} — entity page with linked recipes and Wikidata context.`,
+    };
+  } catch {
+    return {};
+  }
 }
 
 export default async function IngredientPage({ params }: PageProps) {
