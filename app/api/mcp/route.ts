@@ -6,25 +6,34 @@ import { join } from 'node:path';
 /**
  * API route that bridges the Next.js frontend to the Biga-MCP server.
  *
- * Spawns the MCP server as a child process using stdio transport, sends
- * a JSON-RPC request, collects the response, and returns the parsed
- * tool result to the caller.
+ * Two modes:
+ *   1. HTTP mode (production): MCP_SERVER_URL is set — sends JSON-RPC
+ *      requests to the remote MCP server over HTTP.
+ *   2. stdio mode (local dev): spawns the MCP server as a child process
+ *      using stdio transport.
  *
- * This is the local dev transport. Production transport is unresolved
- * (2FI-100). Do not assume HTTP MCP transport is available.
+ * The frontend always calls this route at /api/mcp. The bridge decides
+ * which transport to use based on environment variables.
  */
 
-// Path to the built MCP server entry point
+// ─── HTTP mode config ────────────────────────────────────────────────────────
+
+const MCP_SERVER_URL = process.env['MCP_SERVER_URL']; // e.g. https://biga-mcp.up.railway.app/mcp
+
+// ─── stdio mode config ──────────────────────────────────────────────────────
+
 const MCP_SERVER_PATH =
   process.env['MCP_SERVER_PATH'] ??
   join(process.cwd(), '..', '..', 'Biga', 'Biga-MCP', 'dist', 'index.js');
 
-if (!existsSync(MCP_SERVER_PATH)) {
+if (!MCP_SERVER_URL && !existsSync(MCP_SERVER_PATH)) {
   console.error(
-    `[MCP bridge] Server not found at ${MCP_SERVER_PATH}.\n` +
-      `Run "npm run build" in Biga-MCP/ first.`,
+    `[MCP bridge] No MCP_SERVER_URL set and server not found at ${MCP_SERVER_PATH}.\n` +
+      `Set MCP_SERVER_URL for production or run "npm run build" in Biga-MCP/ for local dev.`,
   );
 }
+
+// ─── Shared types ────────────────────────────────────────────────────────────
 
 interface McpRequest {
   tool: string;
@@ -38,6 +47,8 @@ interface JsonRpcResponse {
   error?: { message: string };
 }
 
+// ─── Route handler ───────────────────────────────────────────────────────────
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const body = (await request.json()) as McpRequest;
   const { tool, args = {} } = body;
@@ -46,21 +57,95 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Missing tool name' }, { status: 400 });
   }
 
-  if (!existsSync(MCP_SERVER_PATH)) {
-    return NextResponse.json(
-      { error: `MCP server not found at ${MCP_SERVER_PATH}. Run "npm run build" in Biga-MCP/.` },
-      { status: 500 },
-    );
-  }
-
   try {
-    const result = await callMcpTool(tool, args);
+    const result = MCP_SERVER_URL
+      ? await callMcpToolHttp(tool, args)
+      : await callMcpToolStdio(tool, args);
     return NextResponse.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+// ─── HTTP transport (production) ─────────────────────────────────────────────
+
+/**
+ * Sends MCP JSON-RPC requests to the remote server over HTTP.
+ *
+ * The Streamable HTTP transport expects standard JSON-RPC messages
+ * posted to the /mcp endpoint. We send initialize + initialized + tools/call
+ * in sequence, same as the stdio handshake but over HTTP.
+ */
+async function callMcpToolHttp(
+  tool: string,
+  args: Record<string, unknown>,
+): Promise<unknown> {
+  // Step 1: Initialize
+  const initRes = await fetch(MCP_SERVER_URL!, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'initialize',
+      params: {
+        protocolVersion: '2024-11-05',
+        capabilities: {},
+        clientInfo: { name: 'accidental-recipes', version: '0.1.0' },
+      },
+    }),
+  });
+
+  if (!initRes.ok) {
+    throw new Error(`MCP initialize failed: ${initRes.status} ${initRes.statusText}`);
+  }
+
+  // Step 2: Send initialized notification
+  await fetch(MCP_SERVER_URL!, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      method: 'notifications/initialized',
+    }),
+  });
+
+  // Step 3: Call the tool
+  const toolRes = await fetch(MCP_SERVER_URL!, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: { name: tool, arguments: args },
+    }),
+  });
+
+  if (!toolRes.ok) {
+    throw new Error(`MCP tools/call failed: ${toolRes.status} ${toolRes.statusText}`);
+  }
+
+  const msg = (await toolRes.json()) as JsonRpcResponse;
+
+  if (msg.error) {
+    throw new Error(msg.error.message);
+  }
+
+  const textContent = msg.result?.content?.find((c) => c.type === 'text');
+  if (!textContent) {
+    throw new Error('Tool response had no text content');
+  }
+
+  try {
+    return JSON.parse(textContent.text);
+  } catch {
+    return textContent.text;
+  }
+}
+
+// ─── stdio transport (local dev) ─────────────────────────────────────────────
 
 /**
  * MCP stdio protocol sequence:
@@ -71,10 +156,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  *   5. Server responds with tool result
  *   6. Client kills the process (no persistent connection in this bridge)
  */
-async function callMcpTool(
+async function callMcpToolStdio(
   tool: string,
   args: Record<string, unknown>,
 ): Promise<unknown> {
+  if (!existsSync(MCP_SERVER_PATH)) {
+    throw new Error(
+      `MCP server not found at ${MCP_SERVER_PATH}. Run "npm run build" in Biga-MCP/.`,
+    );
+  }
+
   return new Promise((resolve, reject) => {
     const child = spawn('node', [MCP_SERVER_PATH], {
       stdio: ['pipe', 'pipe', 'pipe'],

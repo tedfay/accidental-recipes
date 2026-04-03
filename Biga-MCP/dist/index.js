@@ -1,6 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { createServer } from 'node:http';
 import { z } from 'zod';
 import { sql } from './db.js';
 import { getRecipe } from './tools/get-recipe.js';
@@ -100,5 +102,50 @@ server.resource('recipe', new ResourceTemplate('recipes://{slug}', { list: undef
     };
 });
 // ─── Start ───────────────────────────────────────────────────────────────────
-const transport = new StdioServerTransport();
-await server.connect(transport);
+const PORT = process.env['PORT'];
+if (PORT) {
+    // HTTP mode — used by Railway and any production deployment.
+    // Stateless: no session tracking, each request is independent.
+    const transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: undefined,
+    });
+    await server.connect(transport);
+    const httpServer = createServer(async (req, res) => {
+        // Health check for Railway
+        if (req.method === 'GET' && req.url === '/health') {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: 'ok' }));
+            return;
+        }
+        // MCP endpoint — POST only
+        if (req.method === 'POST' && req.url === '/mcp') {
+            const chunks = [];
+            for await (const chunk of req) {
+                chunks.push(chunk);
+            }
+            const body = JSON.parse(Buffer.concat(chunks).toString());
+            await transport.handleRequest(req, res, body);
+            return;
+        }
+        // GET /mcp for SSE stream (required by Streamable HTTP spec)
+        if (req.method === 'GET' && req.url === '/mcp') {
+            await transport.handleRequest(req, res);
+            return;
+        }
+        // DELETE /mcp for session cleanup (spec compliance, no-op in stateless)
+        if (req.method === 'DELETE' && req.url === '/mcp') {
+            await transport.handleRequest(req, res);
+            return;
+        }
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Not found' }));
+    });
+    httpServer.listen(Number(PORT), () => {
+        console.log(`Biga-MCP HTTP server listening on port ${PORT}`);
+    });
+}
+else {
+    // stdio mode — local dev, spawned by the Next.js API route.
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+}
