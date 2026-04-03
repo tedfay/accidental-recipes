@@ -29,8 +29,8 @@ for (const key of required) {
   }
 }
 
-const dbUrl = process.env['DATABASE_URL']!;
-if (dbUrl.includes('.supabase.co') && !dbUrl.includes('pooler.supabase.com')) {
+const dbUrl = process.env['DATABASE_URL'];
+if (dbUrl && dbUrl.includes('.supabase.co') && !dbUrl.includes('pooler.supabase.com')) {
   console.warn(
     `[env] DATABASE_URL appears to use the direct Supabase host, not the session pooler.\n` +
       `This will fail on networks that can't resolve Supabase direct hostnames.\n` +
