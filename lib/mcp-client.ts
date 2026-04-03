@@ -4,14 +4,17 @@ import type { Recipe, SearchResult } from '@/types/recipe';
 /**
  * MCP client for the Biga server.
  *
- * In local dev, calls the Next.js API route at /api/mcp which spawns the
- * Biga-MCP server process over stdio. This is the only transport available
- * today (production transport is unresolved per 2FI-100).
+ * Two modes:
+ *   - Production: MCP_SERVER_URL → Next.js API route → remote HTTP MCP server
+ *   - Local dev: Next.js API route → spawns MCP server via stdio
  *
- * Server components call these functions directly. The internal fetch to
- * the API route uses the Next.js server-side fetch with no caching by
- * default (dynamic data from the database).
+ * During CI/Netlify builds, all calls short-circuit with empty data.
+ * Pages are force-dynamic so the build-time render is throwaway — real
+ * data loads at request time.
  */
+
+const isBuildPhase =
+  process.env['NETLIFY'] === 'true' || process.env['CI'] === 'true';
 
 const MCP_API_URL =
   process.env['MCP_API_URL'] ??
@@ -20,7 +23,13 @@ const MCP_API_URL =
 /** Temporary ceiling until 2FI-125 resolves list_recipes */
 export const RECIPE_FETCH_LIMIT = 999;
 
-async function callTool<T>(tool: string, args: Record<string, unknown> = {}): Promise<T> {
+async function callTool<T>(tool: string, args: Record<string, unknown> = {}, buildFallback?: T): Promise<T> {
+  if (isBuildPhase) {
+    // Short-circuit during build — no MCP server needed.
+    // Pages are force-dynamic; real data loads at request time.
+    return (buildFallback ?? null) as T;
+  }
+
   const res = await fetch(MCP_API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -41,7 +50,7 @@ export async function getRecipe(slug: string): Promise<Recipe> {
 }
 
 export async function searchRecipes(query: string, limit: number = RECIPE_FETCH_LIMIT): Promise<SearchResult[]> {
-  return callTool<SearchResult[]>('search_recipes', { query, limit });
+  return callTool<SearchResult[]>('search_recipes', { query, limit }, []);
 }
 
 /**
@@ -57,7 +66,7 @@ export async function getIngredient(wikidataId: string): Promise<IngredientEntit
 }
 
 export async function listIngredients(): Promise<IngredientSummary[]> {
-  return callTool<IngredientSummary[]>('list_ingredients');
+  return callTool<IngredientSummary[]>('list_ingredients', {}, []);
 }
 
 export async function getRecipesByIngredient(
@@ -77,9 +86,9 @@ export async function searchContent(
   if (query) args.query = query;
   if (includeIds && includeIds.length > 0) args.include_ids = includeIds;
   if (excludeIds && excludeIds.length > 0) args.exclude_ids = excludeIds;
-  return callTool<SearchResult[]>('search_content', args);
+  return callTool<SearchResult[]>('search_content', args, []);
 }
 
 export async function getIngredientFrequencies(): Promise<Record<string, number>> {
-  return callTool<Record<string, number>>('get_ingredient_frequencies');
+  return callTool<Record<string, number>>('get_ingredient_frequencies', {}, {});
 }
