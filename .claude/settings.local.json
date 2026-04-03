@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vitest:*)",
+      "mcp__85116924-6c90-4e6b-92a5-319c0678f803__get_document",
+      "Bash(npx tsc:*)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(npx next:*)",
+      "mcp__85116924-6c90-4e6b-92a5-319c0678f803__save_issue",
+      "Bash(npm run:*)",
+      "mcp__85116924-6c90-4e6b-92a5-319c0678f803__save_comment"
+    ]
+  }
+}
