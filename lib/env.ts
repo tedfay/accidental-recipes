@@ -13,6 +13,14 @@
 const hasMcpServerUrl = !!process.env['MCP_SERVER_URL'];
 const isNetlify = process.env['NETLIFY'] === 'true';
 
+// Warn loudly if Netlify is missing MCP_SERVER_URL — all data calls will fail.
+if (isNetlify && !hasMcpServerUrl) {
+  console.error(
+    '[env] MCP_SERVER_URL is not set on Netlify. ' +
+      'All MCP calls will fail — set this to your Railway deployment URL.',
+  );
+}
+
 // DATABASE_URL is only required when running locally without MCP_SERVER_URL.
 // On Netlify (build and runtime), the frontend talks to Railway — no database needed.
 if (!hasMcpServerUrl && !isNetlify) {
