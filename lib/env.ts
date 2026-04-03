@@ -5,35 +5,31 @@
  * immediately with a clear message instead of silently starting and
  * failing on first request.
  *
- * During Netlify builds, DATABASE_URL is not needed — the frontend
- * reaches the MCP server over HTTP (MCP_SERVER_URL), not via a local
- * database. Warn instead of throw so the build completes.
+ * In production (Netlify), the frontend reaches the MCP server over
+ * HTTP via MCP_SERVER_URL. DATABASE_URL is only needed in local dev
+ * where the Next.js API route spawns the MCP server as a child process.
  */
 
-const isBuildPhase =
-  process.env['NETLIFY'] === 'true' || process.env['CI'] === 'true';
+const hasMcpServerUrl = !!process.env['MCP_SERVER_URL'];
+const isNetlify = process.env['NETLIFY'] === 'true';
 
-const required = ['DATABASE_URL'] as const;
-
-for (const key of required) {
-  if (!process.env[key]) {
-    if (isBuildPhase) {
-      console.warn(`[env] ${key} is not set (build phase — skipping).`);
-    } else {
-      throw new Error(
-        `[env] ${key} is not set.\n` +
-          `Copy .env.example to .env.local and fill in your Supabase session pooler URL.\n` +
-          `See SETUP.md for details.`,
-      );
-    }
+// DATABASE_URL is only required when running locally without MCP_SERVER_URL.
+// On Netlify (build and runtime), the frontend talks to Railway — no database needed.
+if (!hasMcpServerUrl && !isNetlify) {
+  const dbUrl = process.env['DATABASE_URL'];
+  if (!dbUrl) {
+    throw new Error(
+      `[env] DATABASE_URL is not set.\n` +
+        `Copy .env.example to .env.local and fill in your Supabase session pooler URL.\n` +
+        `See SETUP.md for details.`,
+    );
   }
-}
 
-const dbUrl = process.env['DATABASE_URL'];
-if (dbUrl && dbUrl.includes('.supabase.co') && !dbUrl.includes('pooler.supabase.com')) {
-  console.warn(
-    `[env] DATABASE_URL appears to use the direct Supabase host, not the session pooler.\n` +
-      `This will fail on networks that can't resolve Supabase direct hostnames.\n` +
-      `Use the session pooler URL: aws-0-[region].pooler.supabase.com`,
-  );
+  if (dbUrl.includes('.supabase.co') && !dbUrl.includes('pooler.supabase.com')) {
+    console.warn(
+      `[env] DATABASE_URL appears to use the direct Supabase host, not the session pooler.\n` +
+        `This will fail on networks that can't resolve Supabase direct hostnames.\n` +
+        `Use the session pooler URL: aws-0-[region].pooler.supabase.com`,
+    );
+  }
 }
