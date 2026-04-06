@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       // Omit description entirely when headnote is null (null field rule)
       ...(recipe.headnote ? { description: recipe.headnote } : {}),
+      alternates: { canonical: `/recipes/${slug}` },
     };
   } catch {
     return {};

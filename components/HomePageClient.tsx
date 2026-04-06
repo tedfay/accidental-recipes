@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, lazy, Suspense } from 'react';
 import type { SearchResult } from '@/types/recipe';
 import type { IngredientSummary } from '@/types/ingredient';
 import SearchInput from './SearchInput';
-import IngredientFilterPanel from './IngredientFilterPanel';
 import RecipeGrid from './RecipeGrid';
+
+const IngredientFilterPanel = lazy(() => import('./IngredientFilterPanel'));
 
 const SESSION_KEY = 'biga_session_filter';
 const DEBOUNCE_MS = 300;
@@ -165,13 +166,15 @@ export default function HomePageClient({
       )}
 
       <div className="flex gap-6">
-        {/* Filter panel: mobile bottom sheet + desktop sidebar handled internally */}
-        <IngredientFilterPanel
-          ingredients={ingredients}
-          frequencyMap={frequencyMap}
-          selectedIngredients={selectedIngredients}
-          onToggle={handleIngredientToggle}
-        />
+        {/* Filter panel: lazy-loaded — starts collapsed on desktop (2FI-166) */}
+        <Suspense fallback={null}>
+          <IngredientFilterPanel
+            ingredients={ingredients}
+            frequencyMap={frequencyMap}
+            selectedIngredients={selectedIngredients}
+            onToggle={handleIngredientToggle}
+          />
+        </Suspense>
 
         {/* Recipe grid */}
         <div

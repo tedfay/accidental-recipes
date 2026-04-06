@@ -1,8 +1,13 @@
+import type { Metadata } from 'next';
 import { searchRecipes, listIngredients, getIngredientFrequencies } from '@/lib/mcp-client';
 import HomePageClient from '@/components/HomePageClient';
 import McpError from '@/components/McpError';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 export default async function HomePage() {
   let recipes: Awaited<ReturnType<typeof searchRecipes>> = [];

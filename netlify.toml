@@ -1,0 +1,356 @@
+# ── Build ─────────────────────────────────────────────────────────
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# ── Security response headers (2FI-167) ──────────────────────────
+# CSP allows: Google Fonts (gstatic), GA4, GTM, Sentry.
+# Next.js App Router requires 'unsafe-inline' for both scripts and styles.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.sentry.io; img-src 'self' data: https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; frame-src 'none'"
+
+# ── Blogger → Next.js redirects (2FI-179) ────────────────────────
+# 55 URLs from the Blogger sitemap (2009–2022).
+# All 301 permanent redirects with force=true.
+
+[[redirects]]
+  from = "/2022/11/sourdough-turnovers-cherry-or-anything.html"
+  to = "/recipes/sourdough-turnovers-cherry-or-anything"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2022/07/asparagus-risotto.html"
+  to = "/recipes/asparagus-risotto"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2017/03/cauliflower-and-carrot-soup.html"
+  to = "/recipes/cauliflower-and-carrot-soup"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2016/12/butternut-squash-kale-and-white-bean.html"
+  to = "/recipes/butternut-squash-kale-and-white-bean"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2016/06/artichoke-and-mushroom-ragout.html"
+  to = "/recipes/artichoke-and-mushroom-ragout"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2016/02/tomato-sauce.html"
+  to = "/recipes/tomato-sauce"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2015/06/lasagne-with-bechamel-sauce.html"
+  to = "/recipes/lasagne-with-bechamel-sauce"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2014/11/shredded-chicken-tacos.html"
+  to = "/recipes/shredded-chicken-tacos"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2014/09/fried-sage-leaves.html"
+  to = "/recipes/fried-sage-leaves"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2014/05/cannellini-beans-w-spinach-and-pasta.html"
+  to = "/recipes/cannellini-beans-w-spinach-and-pasta"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2014/04/la-macchina-cafe-evanston.html"
+  to = "/recipes/la-macchina-cafe-evanston"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2014/03/pretty-excellent-corned-beef-and-cabbage.html"
+  to = "/recipes/pretty-excellent-corned-beef-and-cabbage"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2014/02/kale-salad-with-yogurt-dill-dressing.html"
+  to = "/recipes/kale-salad-with-yogurt-dill-dressing"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2014/01/christmas-eve-2013-shellfish-and-pasta.html"
+  to = "/recipes/christmas-eve-2013-shellfish-and-pasta"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2014/01/butternut-squash-kale-and-romano-bean.html"
+  to = "/recipes/butternut-squash-kale-and-romano-bean"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/12/mushrooms-chestnuts-and-pasta.html"
+  to = "/recipes/mushrooms-chestnuts-and-pasta"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/09/scary-good-and-scary-healthy-pumpkin.html"
+  to = "/recipes/scary-good-and-scary-healthy-pumpkin"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/07/top-notch-no-oil-banana-muffins.html"
+  to = "/recipes/top-notch-no-oil-banana-muffins"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/06/veggie-frittatta.html"
+  to = "/recipes/veggie-frittatta"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/05/pasta-with-greens.html"
+  to = "/recipes/pasta-with-greens"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/05/pesto-stuffed-baby-eggplant.html"
+  to = "/recipes/pesto-stuffed-baby-eggplant"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/05/grilled-steak-with-tarragon-butter.html"
+  to = "/recipes/grilled-steak-with-tarragon-butter"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/05/butternut-squash-veggie-curry.html"
+  to = "/recipes/butternut-squash-veggie-curry"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/05/hazelnut-carrot-and-flaxseed-muffins.html"
+  to = "/recipes/hazelnut-carrot-and-flaxseed-muffins"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/04/almost-veggie-pot-pie.html"
+  to = "/recipes/almost-veggie-pot-pie"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/03/corned-beef-and-cabbage.html"
+  to = "/recipes/corned-beef-and-cabbage"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/03/turbot-baked-w-yogurt.html"
+  to = "/recipes/turbot-baked-w-yogurt"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/03/greens-tart.html"
+  to = "/recipes/greens-tart"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2013/01/chicken-thighs-garbanzos-and-corn.html"
+  to = "/recipes/chicken-thighs-garbanzos-and-corn"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2012/12/roast-chicken-with-lemons.html"
+  to = "/recipes/roast-chicken-with-lemons"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2012/11/white-beans-mushrooms-kale-and-pasta.html"
+  to = "/recipes/white-beans-mushrooms-kale-and-pasta"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2012/11/roasted-root-vegetables.html"
+  to = "/recipes/roasted-root-vegetables"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2012/11/pumpkin-bread-with-italian-flair.html"
+  to = "/recipes/pumpkin-bread-with-italian-flair"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2012/10/meat-sauce.html"
+  to = "/recipes/meat-sauce"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2011/04/ligurian-inspired-greens-tart.html"
+  to = "/recipes/ligurian-inspired-greens-tart"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2011/02/baked-sweet-potatoes-with-orange-juice.html"
+  to = "/recipes/baked-sweet-potatoes-with-orange-juice"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2011/02/great-fast-pizza-dough-recipe-limited.html"
+  to = "/recipes/great-fast-pizza-dough-recipe-limited"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2011/02/chicken-barley-and-mushroom-soup.html"
+  to = "/recipes/chicken-barley-and-mushroom-soup"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2011/01/cornmeal-cake-with-figs.html"
+  to = "/recipes/cornmeal-cake-with-figs"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2010/08/cornbread-muffins.html"
+  to = "/recipes/cornbread-muffins"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2010/07/grilled-vegetable-torte.html"
+  to = "/recipes/grilled-vegetable-torte"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2010/06/grill-roasted-eggplant-mousse.html"
+  to = "/recipes/grill-roasted-eggplant-mousse"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2010/06/chilled-poached-scallops-with-mint.html"
+  to = "/recipes/chilled-poached-scallops-with-mint"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/11/moroccan-inspired-chicken-with-apricots.html"
+  to = "/recipes/moroccan-inspired-chicken-with-apricots"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/11/sweet-potato-pumpkin-puree.html"
+  to = "/recipes/sweet-potato-pumpkin-puree"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/11/quick-baked-apples.html"
+  to = "/recipes/quick-baked-apples"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/10/sweet-potato-cake.html"
+  to = "/recipes/sweet-potato-cake"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/10/janie-bs-pound-cake.html"
+  to = "/recipes/janie-bs-pound-cake"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/10/grandma-lloyds-pumpkin-pie.html"
+  to = "/recipes/grandma-lloyds-pumpkin-pie"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/09/baked-figs-with-honey-and-walnuts.html"
+  to = "/recipes/baked-figs-with-honey-and-walnuts"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/09/broiled-figs-with-goat-cheese-and-honey.html"
+  to = "/recipes/broiled-figs-with-goat-cheese-and-honey"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/09/elegant-chicken-pot-pie-with-sweet.html"
+  to = "/recipes/elegant-chicken-pot-pie-with-sweet"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/06/baked-cannelini-beans-w-serrano-ham.html"
+  to = "/recipes/baked-cannelini-beans-w-serrano-ham"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/05/spinach-risotto-w-asparagus-morels-and.html"
+  to = "/recipes/spinach-risotto-w-asparagus-morels-and"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/05/extra-uumph-to-chocolate-chip-cookie.html"
+  to = "/recipes/extra-uumph-to-chocolate-chip-cookie"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/2009/05/vietnamese-fish-tacos.html"
+  to = "/recipes/vietnamese-fish-tacos"
+  status = 301
+  force = true

@@ -22,6 +22,7 @@ export const metadata: Metadata = {
   title: 'Ingredients',
   description:
     'Browse all ingredients in the Accidental Recipes knowledge graph, linked to Wikidata entities.',
+  alternates: { canonical: '/ingredients' },
 };
 
 export default async function IngredientsPage() {

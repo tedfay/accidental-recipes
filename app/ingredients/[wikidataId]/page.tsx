@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: displayName,
       description: `${displayName} — entity page with linked recipes and Wikidata context.`,
+      alternates: { canonical: `/ingredients/${wikidataId}` },
     };
   } catch {
     return {};
