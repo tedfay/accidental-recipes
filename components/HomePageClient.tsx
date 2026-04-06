@@ -151,7 +151,7 @@ export default function HomePageClient({
           <button
             type="button"
             onClick={handleClearFilters}
-            className="shrink-0 rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-600 hover:border-neutral-500 hover:text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:border-neutral-600 dark:text-neutral-400 dark:hover:border-neutral-400 dark:hover:text-neutral-100"
+            className="shrink-0 rounded-lg border border-border px-3 py-2 text-sm text-ink-secondary hover:border-ink-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           >
             Clear filters
           </button>
@@ -159,7 +159,7 @@ export default function HomePageClient({
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+        <p className="text-sm text-red-600" role="alert">
           {error}
         </p>
       )}

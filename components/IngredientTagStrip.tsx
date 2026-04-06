@@ -34,7 +34,7 @@ export default function IngredientTagStrip({
           return (
             <span
               key={ing.id}
-              className="shrink-0 rounded-full border border-neutral-200 px-3 py-1 text-xs text-neutral-400 opacity-50 dark:border-neutral-700 dark:text-neutral-600"
+              className="shrink-0 rounded-full border border-border px-3 py-1 text-xs text-ink-muted opacity-50"
               title="No entity link — filtering unavailable"
               aria-disabled="true"
             >
@@ -52,8 +52,8 @@ export default function IngredientTagStrip({
             onClick={() => onToggle(ing.wikidata_id)}
             className={`shrink-0 rounded-full border px-3 py-1 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${
               isSelected
-                ? 'border-neutral-900 bg-neutral-900 text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900'
-                : 'border-neutral-300 text-neutral-700 hover:border-neutral-500 hover:text-neutral-900 dark:border-neutral-600 dark:text-neutral-300 dark:hover:border-neutral-400 dark:hover:text-neutral-100'
+                ? 'border-ink bg-ink text-canvas'
+                : 'border-border text-ink-secondary hover:border-ink-muted hover:text-ink'
             }`}
           >
             {ing.name}

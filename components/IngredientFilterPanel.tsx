@@ -100,19 +100,19 @@ export default function IngredientFilterPanel({
       value={filterText}
       onChange={(e) => setFilterText(e.target.value)}
       placeholder="Search ingredients..."
-      className="w-full rounded border border-neutral-200 bg-transparent px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-400 focus:border-neutral-400 focus:outline-none dark:border-neutral-700 dark:text-neutral-300 dark:placeholder:text-neutral-500 dark:focus:border-neutral-500"
+      className="w-full rounded border border-border bg-transparent px-2 py-1.5 text-xs text-ink-secondary placeholder:text-ink-muted focus:border-ink-muted focus:outline-none"
     />
   );
 
   // Active filter breadcrumb summary
   const filterSummary = activeCount > 0 && (
-    <div className="flex flex-wrap items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
-      <span className="text-neutral-400 dark:text-neutral-500">Filtering:</span>
+    <div className="flex flex-wrap items-center gap-1 text-xs text-ink-muted">
+      <span className="text-ink-muted">Filtering:</span>
       {selectedNames.map((name, i) => (
         <span key={name}>
-          <span className="text-neutral-700 dark:text-neutral-300">{name}</span>
+          <span className="text-ink-secondary">{name}</span>
           {i < selectedNames.length - 1 && (
-            <span className="text-neutral-300 dark:text-neutral-600">{' + '}</span>
+            <span className="text-border">{' + '}</span>
           )}
         </span>
       ))}
@@ -130,7 +130,7 @@ export default function IngredientFilterPanel({
         return (
           <div key={category}>
             {idx > 0 && (
-              <div className="mb-2 border-t border-neutral-100 dark:border-neutral-800" />
+              <div className="mb-2 border-t border-border-subtle" />
             )}
             <div className="space-y-0.5">
               {items.map((ing) => {
@@ -142,14 +142,14 @@ export default function IngredientFilterPanel({
                     type="button"
                     aria-pressed={isSelected}
                     onClick={() => onToggle(ing.wikidata_id)}
-                    className={`flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-left text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-current ${
+                    className={`flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-left text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${
                       isSelected
-                        ? 'font-medium text-neutral-900 dark:text-neutral-100'
-                        : 'text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200'
+                        ? 'font-medium text-ink'
+                        : 'text-ink-muted hover:text-ink-secondary'
                     }`}
                   >
                     <span className="flex-1 truncate">{ing.name}</span>
-                    <span className="tabular-nums text-[10px] text-neutral-400 dark:text-neutral-500">
+                    <span className="tabular-nums text-[10px] text-ink-muted">
                       {count}
                     </span>
                   </button>
@@ -160,7 +160,7 @@ export default function IngredientFilterPanel({
         );
       })}
       {orderedCategories.length === 0 && (
-        <p className="py-2 text-xs text-neutral-400 dark:text-neutral-500">
+        <p className="py-2 text-xs text-ink-muted">
           No matching ingredients.
         </p>
       )}
@@ -174,11 +174,11 @@ export default function IngredientFilterPanel({
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
-          className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-700 hover:border-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:border-neutral-600 dark:text-neutral-300 dark:hover:border-neutral-400"
+          className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-ink-secondary hover:border-ink-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
         >
           <span>Filter</span>
           {activeCount > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-neutral-900 px-1.5 text-xs text-white dark:bg-neutral-100 dark:text-neutral-900">
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1.5 text-xs text-canvas">
               {activeCount}
             </span>
           )}
@@ -195,13 +195,13 @@ export default function IngredientFilterPanel({
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />
-          <div className="absolute inset-x-0 bottom-0 flex max-h-[75vh] flex-col rounded-t-2xl bg-white dark:bg-neutral-900">
+          <div className="absolute inset-x-0 bottom-0 flex max-h-[75vh] flex-col rounded-t-2xl bg-canvas">
             {/* Sticky header */}
-            <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-neutral-100 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900">
-              <h2 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+            <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-border-subtle bg-canvas px-4 py-3">
+              <h2 className="text-sm font-medium text-ink">
                 Filter by ingredient
                 {activeCount > 0 && (
-                  <span className="ml-2 text-xs font-normal text-neutral-500">
+                  <span className="ml-2 text-xs font-normal text-ink-muted">
                     {activeCount} selected
                   </span>
                 )}
@@ -209,7 +209,7 @@ export default function IngredientFilterPanel({
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
-                className="rounded px-2 py-1 text-sm font-medium text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800"
+                className="rounded px-2 py-1 text-sm font-medium text-ink hover:bg-canvas-raised"
               >
                 Done
               </button>
@@ -230,7 +230,7 @@ export default function IngredientFilterPanel({
             type="button"
             onClick={() => setDesktopOpen(true)}
             aria-expanded="false"
-            className="flex items-center gap-2 rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-600 hover:border-neutral-400 hover:text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-neutral-500 dark:hover:text-neutral-200"
+            className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-ink-secondary hover:border-ink-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           >
             <svg
               width="14"
@@ -249,22 +249,22 @@ export default function IngredientFilterPanel({
             </svg>
             <span>Filter ingredients</span>
             {activeCount > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-neutral-900 px-1.5 text-xs text-white dark:bg-neutral-100 dark:text-neutral-900">
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1.5 text-xs text-canvas">
                 {activeCount}
               </span>
             )}
           </button>
         ) : (
-          <div className="w-52 border-r border-neutral-100 pr-6 dark:border-neutral-800">
+          <div className="w-52 border-r border-border-subtle pr-6">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+              <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">
                 Ingredients
               </span>
               <button
                 type="button"
                 onClick={() => setDesktopOpen(false)}
                 aria-expanded="true"
-                className="rounded p-1 text-neutral-400 hover:text-neutral-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-current dark:text-neutral-500 dark:hover:text-neutral-200"
+                className="rounded p-1 text-ink-muted hover:text-ink-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
                 aria-label="Collapse filter panel"
               >
                 <svg

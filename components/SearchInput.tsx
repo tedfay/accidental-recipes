@@ -24,7 +24,7 @@ export default function SearchInput({ value, onChange }: SearchInputProps) {
       placeholder="Search recipes\u2026"
       defaultValue={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
+      className="w-full rounded-md border border-border bg-canvas px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
     />
   );
 }

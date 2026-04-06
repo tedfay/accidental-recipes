@@ -1,6 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Brand color tokens ───────────────────────────────────────── */
+:root {
+  --color-canvas: #FAFAF8;
+  --color-canvas-raised: #F0EEE9;
+  --color-ink: #1C1917;
+  --color-ink-secondary: #44403C;
+  --color-ink-muted: #78716C;
+  --color-sage: #4A6741;
+  --color-sage-light: #6B8F67;
+  --color-sage-muted: #D4E0D2;
+  --color-border: #D6D3CF;
+  --color-border-subtle: #E8E6E3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-canvas: #1C1917;
+    --color-canvas-raised: #28231F;
+    --color-ink: #FAFAF8;
+    --color-ink-secondary: #D6D3CF;
+    --color-ink-muted: #A8A29E;
+    --color-sage: #6B8F67;
+    --color-sage-light: #4A6741;
+    --color-sage-muted: #2A3D28;
+    --color-border: #3C3531;
+    --color-border-subtle: #2C2824;
+  }
+}
+
+/* ── Base layer ───────────────────────────────────────────────── */
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* ── Link utilities (WCAG AA — sage accent) ───────────────────── */
+@layer components {
+  .link-underline {
+    @apply underline decoration-sage-muted underline-offset-2
+           hover:decoration-sage
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current;
+  }
+
+  .link-secondary {
+    @apply link-underline text-sage
+           hover:text-sage-light;
+  }
+
+  .link-content {
+    @apply link-underline text-sage
+           hover:text-sage-light;
+  }
+}
 
 /* WCAG 2.2 Focus Not Obscured — prevent focused elements hiding behind sticky headers */
 html {

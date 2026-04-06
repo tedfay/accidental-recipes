@@ -23,7 +23,7 @@ export default function StepList({
       >
         Instructions
       </h2>
-      <ol role="list" className="mt-3 list-decimal space-y-4 pl-6 marker:text-neutral-400 marker:font-medium dark:marker:text-neutral-500">
+      <ol role="list" className="mt-3 list-decimal space-y-4 pl-6 marker:text-ink-muted marker:font-medium">
         {sorted.map((step) => (
           <Step key={step.order} step={step} />
         ))}
@@ -40,7 +40,7 @@ function Step({
   imageSrc?: string | null;
 }) {
   return (
-    <li className="text-neutral-900 dark:text-neutral-100">
+    <li className="text-ink">
       <p>{step.text}</p>
       {/* Image slot — not rendered until step-level images are in the data shape */}
       {imageSrc && (

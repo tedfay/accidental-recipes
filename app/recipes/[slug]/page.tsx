@@ -68,12 +68,12 @@ export default async function RecipePage({ params }: PageProps) {
       />
 
       {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
+      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-ink-muted">
         <ol className="flex items-center gap-1.5">
           <li>
             <Link
               href="/"
-              className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-700 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:text-neutral-200 dark:hover:decoration-neutral-400"
+              className="link-secondary"
             >
               Recipes
             </Link>
@@ -88,7 +88,7 @@ export default async function RecipePage({ params }: PageProps) {
         <HeroPlaceholder title={title} imageSrc={recipe.meta?.ogImage} />
 
         {recipe.headnote && (
-          <p className="mt-6 text-neutral-700 dark:text-neutral-300 leading-relaxed">
+          <p className="mt-6 text-ink-secondary leading-relaxed">
             {recipe.headnote}
           </p>
         )}

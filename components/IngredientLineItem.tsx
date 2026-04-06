@@ -25,11 +25,11 @@ export default function IngredientLineItem({
 
   if (!ingredient.entity) {
     return (
-      <li className="relative py-1 text-neutral-900 dark:text-neutral-100">
+      <li className="relative py-1 text-ink">
         {/* Marker gutter — static bullet for unlinked ingredients.
             Holds the space where a category icon will go when data supports it. */}
         <span
-          className="absolute -left-5 top-[0.55rem] inline-block h-[7px] w-[7px] rounded-full border border-neutral-400 dark:border-neutral-500"
+          className="absolute -left-5 top-[0.55rem] inline-block h-[7px] w-[7px] rounded-full border border-ink-muted"
           aria-hidden="true"
         />
         {ingredient.rawString}
@@ -44,13 +44,13 @@ export default function IngredientLineItem({
     <li className="relative py-1">
       <details className="group">
         <summary
-          className="cursor-default list-none text-neutral-900 dark:text-neutral-100 [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          className="cursor-default list-none text-ink [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           aria-controls={panelId}
         >
           {/* Marker gutter — entity dot as disclosure cue.
               Sits in same position as the static bullet on unlinked lines. */}
           <span
-            className="absolute -left-5 top-[0.55rem] inline-block h-[7px] w-[7px] rounded-full bg-neutral-400 dark:bg-neutral-500 group-open:bg-neutral-700 dark:group-open:bg-neutral-300"
+            className="absolute -left-5 top-[0.55rem] inline-block h-[7px] w-[7px] rounded-full bg-ink-muted group-open:bg-ink-secondary"
             aria-hidden="true"
           />
           {formatIngredientText(ingredient)}
@@ -59,28 +59,28 @@ export default function IngredientLineItem({
           id={panelId}
           role="region"
           aria-label={`Entity details for ${entity.name}`}
-          className="mt-1.5 rounded border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="mt-1.5 rounded border border-border bg-canvas-raised px-3 py-2 text-sm"
         >
           <dl className="flex flex-wrap gap-x-4 gap-y-1">
             <div className="flex gap-1.5">
-              <dt className="font-medium text-neutral-600 dark:text-neutral-400">Entity</dt>
+              <dt className="font-medium text-ink-secondary">Entity</dt>
               <dd>{entity.name}</dd>
             </div>
             {showCategory && (
               <div className="flex gap-1.5">
-                <dt className="font-medium text-neutral-600 dark:text-neutral-400">Category</dt>
+                <dt className="font-medium text-ink-secondary">Category</dt>
                 <dd>{entity.category}</dd>
               </div>
             )}
             <div className="flex gap-1.5">
-              <dt className="font-medium text-neutral-600 dark:text-neutral-400">Wikidata</dt>
+              <dt className="font-medium text-ink-secondary">Wikidata</dt>
               <dd>{entity.wikidata_id}</dd>
             </div>
           </dl>
           {/* TODO: 2FI-130 — ingredient routes will move to /ingredients/[slug] */}
           <Link
             href={`/ingredients/${entity.wikidata_id}`}
-            className="mt-1.5 inline-block text-sm text-neutral-600 underline decoration-neutral-300 underline-offset-2 hover:text-neutral-900 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:text-neutral-400 dark:decoration-neutral-600 dark:hover:text-neutral-100 dark:hover:decoration-neutral-400"
+            className="mt-1.5 inline-block text-sm link-secondary"
           >
             View ingredient
           </Link>

@@ -10,7 +10,7 @@ export default function RecipeGrid({ recipes, resultCount }: RecipeGridProps) {
   if (!Array.isArray(recipes)) {
     return (
       <section aria-label="Recipe results">
-        <p className="py-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
+        <p className="py-8 text-center text-sm text-ink-muted">
           No recipes match the current filter.
         </p>
       </section>
@@ -23,7 +23,7 @@ export default function RecipeGrid({ recipes, resultCount }: RecipeGridProps) {
         {resultCount} recipe{resultCount !== 1 ? 's' : ''} found
       </div>
       {recipes.length === 0 ? (
-        <p className="py-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
+        <p className="py-8 text-center text-sm text-ink-muted">
           No recipes match the current filter.
         </p>
       ) : (
