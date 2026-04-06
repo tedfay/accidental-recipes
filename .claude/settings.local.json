@@ -8,7 +8,29 @@
       "Bash(npx next:*)",
       "mcp__85116924-6c90-4e6b-92a5-319c0678f803__save_issue",
       "Bash(npm run:*)",
-      "mcp__85116924-6c90-4e6b-92a5-319c0678f803__save_comment"
+      "mcp__85116924-6c90-4e6b-92a5-319c0678f803__save_comment",
+      "Bash(cp \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Biga\\\\Biga-MCP\\\\package.json\" \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Accidental Recipes\\\\Biga\\\\Biga-MCP\\\\package.json\")",
+      "Bash(cp \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Biga\\\\Biga-MCP\\\\tsconfig.json\" \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Accidental Recipes\\\\Biga\\\\Biga-MCP\\\\tsconfig.json\")",
+      "Bash(cp \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Biga\\\\Biga-MCP\\\\dist\\\\index.js\" \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Accidental Recipes\\\\Biga\\\\Biga-MCP\\\\dist\\\\index.js\")",
+      "Bash(cp \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Biga\\\\Biga-MCP\\\\dist\\\\tools\\\\search-content.js\" \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Accidental Recipes\\\\Biga\\\\Biga-MCP\\\\dist\\\\tools\\\\search-content.js\")",
+      "Bash(cp \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Biga\\\\Biga-MCP\\\\dist\\\\tools\\\\get-ingredient-frequencies.js\" \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Accidental Recipes\\\\Biga\\\\Biga-MCP\\\\dist\\\\tools\\\\get-ingredient-frequencies.js\")",
+      "Bash(npm install:*)",
+      "Bash(curl -s https://accidental-recipes-production.up.railway.app/health)",
+      "Bash(NETLIFY=true CI=true npx next build)",
+      "Bash(NETLIFY=true npx next build)",
+      "Bash(NETLIFY=true DATABASE_URL= npx next build)",
+      "Bash(curl -s -X POST https://accidental-recipes-production.up.railway.app/mcp -H \"Content-Type: application/json\" -d '{\"\"jsonrpc\"\":\"\"2.0\"\",\"\"id\"\":1,\"\"method\"\":\"\"initialize\"\",\"\"params\"\":{\"\"protocolVersion\"\":\"\"2024-11-05\"\",\"\"capabilities\"\":{},\"\"clientInfo\"\":{\"\"name\"\":\"\"test\"\",\"\"version\"\":\"\"0.1.0\"\"}}}')",
+      "Bash(curl -s -X POST https://accidental-recipes-production.up.railway.app/mcp -H \"Content-Type: application/json\" -H \"Accept: application/json, text/event-stream\" -d '{\"\"jsonrpc\"\":\"\"2.0\"\",\"\"id\"\":1,\"\"method\"\":\"\"initialize\"\",\"\"params\"\":{\"\"protocolVersion\"\":\"\"2024-11-05\"\",\"\"capabilities\"\":{},\"\"clientInfo\"\":{\"\"name\"\":\"\"test\"\",\"\"version\"\":\"\"0.1.0\"\"}}}')",
+      "Bash(curl -s -N --max-time 5 -X POST https://accidental-recipes-production.up.railway.app/mcp -H \"Content-Type: application/json\" -H \"Accept: application/json, text/event-stream\" -d '{\"\"jsonrpc\"\":\"\"2.0\"\",\"\"id\"\":1,\"\"method\"\":\"\"initialize\"\",\"\"params\"\":{\"\"protocolVersion\"\":\"\"2024-11-05\"\",\"\"capabilities\"\":{},\"\"clientInfo\"\":{\"\"name\"\":\"\"test\"\",\"\"version\"\":\"\"0.1.0\"\"}}}')",
+      "Bash(curl -v --max-time 5 -X POST https://accidental-recipes-production.up.railway.app/mcp -H \"Content-Type: application/json\" -H \"Accept: application/json, text/event-stream\" -d '{\"\"jsonrpc\"\":\"\"2.0\"\",\"\"id\"\":1,\"\"method\"\":\"\"initialize\"\",\"\"params\"\":{\"\"protocolVersion\"\":\"\"2024-11-05\"\",\"\"capabilities\"\":{},\"\"clientInfo\"\":{\"\"name\"\":\"\"test\"\",\"\"version\"\":\"\"0.1.0\"\"}}}')",
+      "WebSearch",
+      "Bash(curl -s -X POST https://accidental-recipes-production.up.railway.app/tools/call -H \"Content-Type: application/json\" -d '{\"\"\"\"tool\"\"\"\":\"\"\"\"search_recipes\"\"\"\",\"\"\"\"args\"\"\"\":{\"\"\"\"query\"\"\"\":\"\"\"\"\"\"\"\",\"\"\"\"limit\"\"\"\":3}}')",
+      "Bash(NETLIFY=true MCP_SERVER_URL=https://accidental-recipes-production.up.railway.app/mcp npx next build)",
+      "mcp__biga__get_ingredient",
+      "mcp__biga__list_ingredients",
+      "Bash(find . -type f -name *consent* -o -name *cookie* -o -name *privacy* -o -name *analytics*)",
+      "Bash(xargs grep:*)",
+      "Bash(curl -s http://localhost:3000/ingredients/Q11106)"
     ]
   }
 }

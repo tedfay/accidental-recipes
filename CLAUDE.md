@@ -51,18 +51,32 @@ for the first time should be: "what is this — this is interesting."
 Never query Postgres directly. Never import from Biga Technical.
 All data comes through Biga-MCP tools:
 - `get_recipe(slug: string)`
-- `list_recipes(options)`
 - `search_recipes(query: string, limit: number)`
+- `search_content(query?, include_ids?, exclude_ids?, limit?)` — combined text + ingredient filter
 - `get_ingredient(wikidataId: string)`
 - `get_seo_metadata(slug: string)`
 - `list_ingredients()`
+- `get_ingredient_frequencies()` — recipe count per ingredient
+- `get_recipes_by_ingredient(wikidataIds: string[], limit: number)`
 - `health_check()`
 
-**MCP transport is stdio in local dev.**
-In production, the transport question is unresolved (see 2FI-100).
-Do not assume HTTP transport is available. Do not architect around it.
-The frontend calls MCP tools through a Next.js API route that spawns
-the local MCP server process. Document this clearly in code comments.
+**MCP transport is dual-mode (2FI-100, resolved Session 9).**
+- **Production (Netlify):** `MCP_SERVER_URL` set → `lib/mcp-transport.ts`
+  calls Railway `/tools/call` endpoint directly via HTTP POST.
+- **Local dev:** `MCP_SERVER_URL` not set → `lib/mcp-transport.ts` spawns
+  MCP server as a stdio child process.
+
+Server components call `mcp-transport.ts` directly via `mcp-client.ts`.
+They do NOT self-fetch through the API route — Netlify serverless
+functions cannot reach `localhost`. The `/api/mcp` route exists solely
+as a proxy for browser-originated requests from client components.
+
+**Key files:**
+- `lib/mcp-transport.ts` — transport selection (HTTP vs stdio)
+- `lib/mcp-client.ts` — typed wrappers, all tool functions
+- `app/api/mcp/route.ts` — thin proxy for browser fetches only
+- `lib/env.ts` — env validation (skips DATABASE_URL on Netlify)
+- `components/McpError.tsx` — error state when MCP unreachable
 
 **Content objects, not pages.**
 Components receive typed data objects. They never parse strings to
@@ -385,8 +399,8 @@ until it is confirmed present in live MCP responses.
 | — | Ingredient graph / natural language search | See roadmap doc in Linear |
 | — | Identity / login / personalization | Phase 3+ |
 | — | Metric unit toggle | Structure supports it; UI not required yet |
-| — | HTTP MCP transport | Unresolved (2FI-100) |
-| — | Static generation / generateStaticParams | Unresolved (2FI-100) |
+| — | HTTP MCP transport | **RESOLVED** (2FI-100, Session 9) — Railway + /tools/call |
+| — | Static generation / generateStaticParams | HTTP transport resolved; generateStaticParams can now be implemented |
 | — | Related recipes | Future rev |
 | — | Step-level timer extraction | Future rev |
 
