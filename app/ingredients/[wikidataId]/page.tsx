@@ -60,7 +60,7 @@ export default async function IngredientPage({ params }: PageProps) {
           <li>
             <Link
               href="/"
-              className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-700 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:text-neutral-200 dark:hover:decoration-neutral-400"
+              className="link-secondary"
             >
               Home
             </Link>
@@ -69,7 +69,7 @@ export default async function IngredientPage({ params }: PageProps) {
           <li>
             <Link
               href="/ingredients"
-              className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-700 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:text-neutral-200 dark:hover:decoration-neutral-400"
+              className="link-secondary"
             >
               Ingredients
             </Link>
@@ -100,7 +100,7 @@ export default async function IngredientPage({ params }: PageProps) {
                   href={`https://www.wikidata.org/wiki/${ingredient.wikidata_id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+                  className="link-secondary"
                 >
                   {ingredient.wikidata_id}
                 </a>
@@ -122,7 +122,7 @@ export default async function IngredientPage({ params }: PageProps) {
                     href={ingredient.wikipedia_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+                    className="link-secondary"
                   >
                     {ingredient.name} on Wikipedia
                   </a>
@@ -151,7 +151,7 @@ export default async function IngredientPage({ params }: PageProps) {
                 <li key={recipe.slug}>
                   <Link
                     href={`/recipes/${recipe.slug}`}
-                    className="text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:text-neutral-100 dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+                    className="link-content"
                   >
                     {recipe.title}
                   </Link>
@@ -205,7 +205,7 @@ export default async function IngredientPage({ params }: PageProps) {
                     href={`https://www.wikidata.org/wiki/${ingredient.wikidata_id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+                    className="link-secondary"
                   >
                     {ingredient.wikidata_id}
                   </a>

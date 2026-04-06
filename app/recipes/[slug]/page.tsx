@@ -73,7 +73,7 @@ export default async function RecipePage({ params }: PageProps) {
           <li>
             <Link
               href="/"
-              className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-700 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:text-neutral-200 dark:hover:decoration-neutral-400"
+              className="link-secondary"
             >
               Recipes
             </Link>

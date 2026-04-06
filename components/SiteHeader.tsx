@@ -14,7 +14,7 @@ export default function SiteHeader() {
           <li>
             <Link
               href="/"
-              className="text-neutral-600 underline decoration-neutral-300 underline-offset-2 hover:text-neutral-900 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:text-neutral-400 dark:decoration-neutral-600 dark:hover:text-neutral-100 dark:hover:decoration-neutral-400"
+              className="link-secondary"
             >
               Recipes
             </Link>
@@ -22,7 +22,7 @@ export default function SiteHeader() {
           <li>
             <Link
               href="/ingredients"
-              className="text-neutral-600 underline decoration-neutral-300 underline-offset-2 hover:text-neutral-900 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:text-neutral-400 dark:decoration-neutral-600 dark:hover:text-neutral-100 dark:hover:decoration-neutral-400"
+              className="link-secondary"
             >
               Ingredients
             </Link>

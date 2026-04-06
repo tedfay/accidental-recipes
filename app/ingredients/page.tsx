@@ -51,7 +51,7 @@ export default async function IngredientsPage() {
           <li>
             <Link
               href="/"
-              className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-700 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:text-neutral-200 dark:hover:decoration-neutral-400"
+              className="link-secondary"
             >
               Home
             </Link>
@@ -149,7 +149,7 @@ function IngredientEntry({
       {/* TODO: 2FI-130 — ingredient routes will move to /ingredients/[slug] */}
       <Link
         href={`/ingredients/${ingredient.wikidata_id}`}
-        className="text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:text-neutral-100 dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+        className="link-content"
       >
         {ingredient.name}
       </Link>

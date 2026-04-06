@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Link utilities (WCAG AA contrast — 2FI-107) ─────────────── */
+@layer components {
+  /* Base: visible underline + keyboard focus ring */
+  .link-underline {
+    @apply underline decoration-neutral-400 underline-offset-2
+           hover:decoration-neutral-600
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current
+           dark:decoration-neutral-500 dark:hover:decoration-neutral-300;
+  }
+
+  /* Nav, breadcrumbs, metadata, external links */
+  .link-secondary {
+    @apply link-underline text-neutral-700
+           hover:text-neutral-900
+           dark:text-neutral-300 dark:hover:text-neutral-100;
+  }
+
+  /* Primary body links — recipe titles, ingredient names */
+  .link-content {
+    @apply link-underline text-neutral-900
+           dark:text-neutral-100;
+  }
+}
+
 /* WCAG 2.2 Focus Not Obscured — prevent focused elements hiding behind sticky headers */
 html {
   scroll-padding-top: 4rem;
