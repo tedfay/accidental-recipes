@@ -1,3 +1,4 @@
-# Pre-launch block — flip to Allow: / on launch day (see 2FI-170 checklist)
 User-agent: *
-Disallow: /
+Allow: /
+
+Sitemap: https://accidentalrecipes.com/sitemap.xml
