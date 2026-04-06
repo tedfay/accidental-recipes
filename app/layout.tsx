@@ -1,14 +1,26 @@
 import '@/lib/env';
 import type { Metadata } from 'next';
 import SiteHeader from '@/components/SiteHeader';
+import GoogleTagManager from '@/components/GoogleTagManager';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import ConsentBanner from '@/components/ConsentBanner';
+import { siteConfig } from '@/lib/site-config';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: 'Accidental Recipes',
-    template: '%s | Accidental Recipes',
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: 'Recipes as structured data objects, enriched with Wikidata entities.',
+  description: siteConfig.description,
+  icons: {
+    icon: [
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
@@ -25,12 +37,15 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+        <GoogleTagManager />
+        <GoogleAnalytics />
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
           <SiteHeader />
           <main id="main-content">
             {children}
           </main>
         </div>
+        <ConsentBanner />
       </body>
     </html>
   );
