@@ -45,13 +45,13 @@ export default async function IngredientsPage() {
       {/* Breadcrumb */}
       <nav
         aria-label="Breadcrumb"
-        className="mb-6 text-sm text-neutral-500 dark:text-neutral-400"
+        className="mb-6 text-sm text-ink-muted"
       >
         <ol className="flex items-center gap-1.5">
           <li>
             <Link
               href="/"
-              className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-700 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:text-neutral-200 dark:hover:decoration-neutral-400"
+              className="link-secondary"
             >
               Home
             </Link>
@@ -62,7 +62,7 @@ export default async function IngredientsPage() {
       </nav>
 
       <h1 className="text-3xl font-semibold tracking-tight">Ingredients</h1>
-      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+      <p className="mt-2 text-sm text-ink-secondary">
         {ingredients.length} ingredients linked to Wikidata entities.
       </p>
 
@@ -132,10 +132,10 @@ function IngredientEntry({
 
   if (!ingredient.wikidata_id) {
     return (
-      <span className="text-neutral-600 dark:text-neutral-400">
+      <span className="text-ink-secondary">
         {ingredient.name}
         {hasAlternates && (
-          <span className="text-neutral-400 dark:text-neutral-500">
+          <span className="text-ink-muted">
             {' '}
             / {ingredient.alternate_names.join(' / ')}
           </span>
@@ -149,12 +149,12 @@ function IngredientEntry({
       {/* TODO: 2FI-130 — ingredient routes will move to /ingredients/[slug] */}
       <Link
         href={`/ingredients/${ingredient.wikidata_id}`}
-        className="text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:text-neutral-100 dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+        className="link-content"
       >
         {ingredient.name}
       </Link>
       {hasAlternates && (
-        <span className="text-neutral-400 dark:text-neutral-500">
+        <span className="text-ink-muted">
           {' '}
           / {ingredient.alternate_names.join(' / ')}
         </span>

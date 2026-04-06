@@ -20,11 +20,11 @@ export default function HeroPlaceholder({
 }) {
   if (imageSrc) {
     return (
-      <div className="overflow-hidden rounded-lg bg-neutral-200 dark:bg-neutral-800">
+      <div className="overflow-hidden rounded-lg bg-canvas-raised">
         {/* Mobile: stack vertically. Desktop: title left, image right */}
         <div className="flex flex-col sm:flex-row">
           <div className="flex items-end p-6 sm:flex-1">
-            <h1 className="text-3xl font-semibold tracking-tight text-neutral-800 dark:text-neutral-100 sm:text-4xl">
+            <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
               {title}
             </h1>
           </div>
@@ -41,8 +41,8 @@ export default function HeroPlaceholder({
   }
 
   return (
-    <div className="min-h-[4rem] rounded-lg bg-neutral-200 px-6 py-8 dark:bg-neutral-800">
-      <h1 className="text-3xl font-semibold tracking-tight text-neutral-800 dark:text-neutral-100 sm:text-4xl">
+    <div className="min-h-[4rem] rounded-lg bg-canvas-raised px-6 py-8">
+      <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
         {title}
       </h1>
     </div>

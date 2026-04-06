@@ -33,6 +33,39 @@ for the first time should be: "what is this — this is interesting."
 
 ---
 
+## Brand system
+
+**Fonts:**
+- Inter (400, 500, 600) + system-ui fallback — used throughout
+- `font-display` and `font-body` Tailwind classes both resolve to Inter
+- Playfair Display was evaluated and dropped — Inter throughout is the decision
+
+**Color tokens** (CSS vars in `:root`, swap automatically for dark mode):
+- `canvas` / `canvas-raised` — page and surface backgrounds
+- `ink` / `ink-secondary` / `ink-muted` — text hierarchy
+- `sage` / `sage-light` / `sage-muted` — accent, links, interactive cues
+- `border` / `border-subtle` — dividers, card edges, input borders
+
+**Usage rules:**
+- Components use Tailwind classes (`text-ink`, `bg-canvas`, `border-border`)
+- Custom CSS uses CSS vars (`var(--color-ink)`)
+- Never hardcode hex values in components
+- No `dark:` prefix needed for brand colors — CSS vars handle the swap
+
+**WCAG link requirement:**
+- Links must use sage accent color, not default blue or muted gray
+- Shared link classes in globals.css: `link-underline`, `link-secondary`, `link-content`
+
+**Do not:**
+- Use any colors from the 2findmarketing.com palette (Deep Sapphire,
+  Signal Green, Accent Orange)
+- Add gradients or box shadows
+- Use script or decorative fonts
+- Hardcode hex values in components — always use Tailwind classes or CSS vars
+- Add a dark mode toggle — `prefers-color-scheme` media query only
+
+---
+
 ## Stack
 
 - **Framework**: Next.js (App Router)

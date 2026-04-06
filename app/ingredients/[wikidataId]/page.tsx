@@ -55,22 +55,16 @@ export default async function IngredientPage({ params }: PageProps) {
   return (
     <>
       {/* ── Breadcrumb ─────────────────────────────────────────── */}
-      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
+      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-ink-muted">
         <ol className="flex items-center gap-1.5">
           <li>
-            <Link
-              href="/"
-              className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-700 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:text-neutral-200 dark:hover:decoration-neutral-400"
-            >
+            <Link href="/" className="link-secondary">
               Home
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link
-              href="/ingredients"
-              className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-700 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:text-neutral-200 dark:hover:decoration-neutral-400"
-            >
+            <Link href="/ingredients" className="link-secondary">
               Ingredients
             </Link>
           </li>
@@ -85,14 +79,14 @@ export default async function IngredientPage({ params }: PageProps) {
           <h1 className="text-3xl font-semibold tracking-tight">
             {ingredient.name}
             {hasAlternateNames && (
-              <span className="text-neutral-500 dark:text-neutral-400">
+              <span className="text-ink-muted">
                 {' '}
                 / {ingredient.alternate_names.join(' / ')}
               </span>
             )}
           </h1>
 
-          <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-neutral-600 dark:text-neutral-400">
+          <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-ink-secondary">
             <div className="flex gap-1.5">
               <dt className="font-medium">Wikidata</dt>
               <dd>
@@ -100,7 +94,7 @@ export default async function IngredientPage({ params }: PageProps) {
                   href={`https://www.wikidata.org/wiki/${ingredient.wikidata_id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+                  className="link-secondary"
                 >
                   {ingredient.wikidata_id}
                 </a>
@@ -122,7 +116,7 @@ export default async function IngredientPage({ params }: PageProps) {
                     href={ingredient.wikipedia_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+                    className="link-secondary"
                   >
                     {ingredient.name} on Wikipedia
                   </a>
@@ -142,7 +136,7 @@ export default async function IngredientPage({ params }: PageProps) {
           </h2>
 
           {ingredient.recipes.length === 0 ? (
-            <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+            <p className="mt-2 text-sm text-ink-muted">
               No published recipes use this ingredient yet.
             </p>
           ) : (
@@ -151,7 +145,7 @@ export default async function IngredientPage({ params }: PageProps) {
                 <li key={recipe.slug}>
                   <Link
                     href={`/recipes/${recipe.slug}`}
-                    className="text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:text-neutral-100 dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+                    className="link-content"
                   >
                     {recipe.title}
                   </Link>
@@ -160,7 +154,7 @@ export default async function IngredientPage({ params }: PageProps) {
             </ul>
           )}
 
-          <p className="mt-4 text-xs text-neutral-400 dark:text-neutral-500">
+          <p className="mt-4 text-xs text-ink-muted">
             {ingredient.recipes.length}{' '}
             {ingredient.recipes.length === 1 ? 'recipe' : 'recipes'}
           </p>
@@ -170,7 +164,7 @@ export default async function IngredientPage({ params }: PageProps) {
         <section className="mt-8">
           <details>
             <summary
-              className="flex cursor-default items-center justify-between rounded-md border border-neutral-300 bg-neutral-50 px-4 py-3 text-sm font-medium text-neutral-700 list-none [&::-webkit-details-marker]:hidden hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+              className="flex cursor-default items-center justify-between rounded-md border border-border bg-canvas-raised px-4 py-3 text-sm font-medium text-ink-secondary list-none [&::-webkit-details-marker]:hidden hover:bg-canvas-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
               aria-controls="entity-details-panel"
             >
               <span>Entity data</span>
@@ -180,24 +174,24 @@ export default async function IngredientPage({ params }: PageProps) {
               id="entity-details-panel"
               role="region"
               aria-label="Wikidata entity details"
-              className="mt-3 rounded-md border border-neutral-200 bg-neutral-50 px-4 py-4 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="mt-3 rounded-md border border-border bg-canvas-raised px-4 py-4 text-sm"
             >
               <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
-                <dt className="font-medium text-neutral-600 dark:text-neutral-400">
+                <dt className="font-medium text-ink-secondary">
                   Canonical name
                 </dt>
                 <dd>{ingredient.name}</dd>
 
                 {hasAlternateNames && (
                   <>
-                    <dt className="font-medium text-neutral-600 dark:text-neutral-400">
+                    <dt className="font-medium text-ink-secondary">
                       Alternate names
                     </dt>
                     <dd>{ingredient.alternate_names.join(', ')}</dd>
                   </>
                 )}
 
-                <dt className="font-medium text-neutral-600 dark:text-neutral-400">
+                <dt className="font-medium text-ink-secondary">
                   Wikidata ID
                 </dt>
                 <dd>
@@ -205,13 +199,13 @@ export default async function IngredientPage({ params }: PageProps) {
                     href={`https://www.wikidata.org/wiki/${ingredient.wikidata_id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+                    className="link-secondary"
                   >
                     {ingredient.wikidata_id}
                   </a>
                 </dd>
 
-                <dt className="font-medium text-neutral-600 dark:text-neutral-400">
+                <dt className="font-medium text-ink-secondary">
                   Category
                 </dt>
                 <dd>{ingredient.category}</dd>
