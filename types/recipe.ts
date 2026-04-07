@@ -57,7 +57,7 @@ export interface RecipeEnrichment {
   enrichmentVersion: number;
 }
 
-/** Search result from search_recipes MCP tool */
+/** Search result from search_content MCP tool */
 export interface SearchResult {
   slug: string;
   title: string;

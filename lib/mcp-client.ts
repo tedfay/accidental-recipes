@@ -12,15 +12,8 @@ import { callMcpTool } from './mcp-transport';
  * No self-fetch, no localhost — calls go directly to the transport layer.
  */
 
-/** Temporary ceiling until 2FI-125 resolves list_recipes */
-export const RECIPE_FETCH_LIMIT = 999;
-
 export async function getRecipe(slug: string): Promise<Recipe> {
   return callMcpTool<Recipe>('get_recipe', { slug });
-}
-
-export async function searchRecipes(query: string, limit: number = RECIPE_FETCH_LIMIT): Promise<SearchResult[]> {
-  return callMcpTool<SearchResult[]>('search_recipes', { query, limit });
 }
 
 /**
