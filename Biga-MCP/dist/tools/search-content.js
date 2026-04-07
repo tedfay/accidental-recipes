@@ -33,7 +33,8 @@ export async function searchContent(query, includeIds, excludeIds, limit) {
             excludeUuids = null;
         }
     }
-    // Build the combined query with conditional clauses
+    // Build the combined query with conditional clauses.
+    // FTS vector: title (A weight) + headnote (B) + ingredient rawStrings (C).
     const results = await sql `
     SELECT
       r.slug,
@@ -42,17 +43,25 @@ export async function searchContent(query, includeIds, excludeIds, limit) {
       jsonb_array_length(r.ingredients) AS ingredient_count,
       ${hasQuery
         ? sql `ts_rank(
-            to_tsvector('english',
-              coalesce(r.meta->>'titleOverride', '') || ' ' || coalesce(r.headnote, '')
-            ),
+            setweight(to_tsvector('english', coalesce(r.meta->>'titleOverride', '')), 'A') ||
+            setweight(to_tsvector('english', coalesce(r.headnote, '')), 'B') ||
+            setweight(to_tsvector('english', coalesce((
+              SELECT string_agg(line->>'rawString', ' ')
+              FROM jsonb_array_elements(r.ingredients) AS line
+            ), '')), 'C'),
             plainto_tsquery('english', ${trimmedQuery})
           )`
         : sql `NULL::float`} AS rank
     FROM recipes r
     WHERE r.status = 'live'
       ${hasQuery
-        ? sql `AND to_tsvector('english',
-            coalesce(r.meta->>'titleOverride', '') || ' ' || coalesce(r.headnote, '')
+        ? sql `AND (
+            setweight(to_tsvector('english', coalesce(r.meta->>'titleOverride', '')), 'A') ||
+            setweight(to_tsvector('english', coalesce(r.headnote, '')), 'B') ||
+            setweight(to_tsvector('english', coalesce((
+              SELECT string_agg(line->>'rawString', ' ')
+              FROM jsonb_array_elements(r.ingredients) AS line
+            ), '')), 'C')
           ) @@ plainto_tsquery('english', ${trimmedQuery})`
         : sql ``}
       ${includeUuids !== null
