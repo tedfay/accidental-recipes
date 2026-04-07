@@ -1,7 +1,15 @@
 'use client';
 
 import * as Sentry from '@sentry/nextjs';
+import { Inter } from 'next/font/google';
 import { useEffect } from 'react';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export default function GlobalError({
   error,
@@ -15,7 +23,7 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body className="bg-canvas text-ink font-body antialiased">
         <div className="mx-auto max-w-4xl px-4 py-16 text-center">
           <h1 className="text-3xl font-semibold tracking-tight">

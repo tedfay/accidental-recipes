@@ -1,11 +1,19 @@
 import '@/lib/env';
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import SiteHeader from '@/components/SiteHeader';
 import GoogleTagManager from '@/components/GoogleTagManager';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import ConsentBanner from '@/components/ConsentBanner';
 import { siteConfig } from '@/lib/site-config';
 import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -29,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="bg-canvas text-ink font-body antialiased">
         <a
           href="#main-content"

@@ -16,8 +16,6 @@ export const siteConfig = {
   font: {
     family: 'Inter',
     weights: [400, 500, 600],
-    googleFontsUrl:
-      'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap',
   },
 
   analytics: {
