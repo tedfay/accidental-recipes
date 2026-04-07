@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import SiteHeader from '@/components/SiteHeader';
 import GoogleTagManager from '@/components/GoogleTagManager';
-import GoogleAnalytics from '@/components/GoogleAnalytics';
 import ConsentBanner from '@/components/ConsentBanner';
 import { siteConfig } from '@/lib/site-config';
 import './globals.css';
@@ -46,7 +45,6 @@ export default function RootLayout({
           Skip to content
         </a>
         <GoogleTagManager />
-        <GoogleAnalytics />
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
           <SiteHeader />
           <main id="main-content">

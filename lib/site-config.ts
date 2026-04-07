@@ -19,8 +19,6 @@ export const siteConfig = {
   },
 
   analytics: {
-    gaMeasurementId:
-      process.env['NEXT_PUBLIC_GA_MEASUREMENT_ID'] || null,
     gtmId: process.env['NEXT_PUBLIC_GTM_ID'] || null,
   },
 

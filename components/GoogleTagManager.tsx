@@ -3,9 +3,8 @@
 /**
  * GTM container loader — consent-gated (2FI-172).
  *
- * For tags beyond GA4 (marketing pixels, future tooling).
- * GA4 fires directly via gtag in GoogleAnalytics.tsx — NOT through GTM.
- * Do not add a GA4 tag inside the GTM container.
+ * Single analytics entry point. GA4 is configured as a tag inside GTM.
+ * Custom events reach GTM via dataLayer.push() in lib/analytics.ts.
  *
  * Renders nothing when:
  * - No GTM ID configured (siteConfig.analytics.gtmId is null)

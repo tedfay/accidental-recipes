@@ -5,15 +5,14 @@
  * granted, all track* functions are no-ops. Every payload includes
  * consent_given: boolean. Property names use snake_case (BigQuery-bound).
  *
- * Fires via window.gtag when the GA4 script is loaded.
+ * Pushes to dataLayer for GTM to pick up via custom event triggers.
  */
 
 import { hasAnalyticsConsent } from '@/lib/consent';
 
 declare global {
   interface Window {
-    gtag?: (...args: unknown[]) => void;
-    dataLayer?: unknown[];
+    dataLayer?: Record<string, unknown>[];
   }
 }
 
@@ -22,9 +21,10 @@ export function trackEvent(
   properties: Record<string, unknown>,
 ): void {
   if (!hasAnalyticsConsent()) return;
-  if (typeof window === 'undefined' || !window.gtag) return;
+  if (typeof window === 'undefined' || !window.dataLayer) return;
 
-  window.gtag('event', name, {
+  window.dataLayer.push({
+    event: name,
     ...properties,
     consent_given: true,
   });
