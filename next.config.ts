@@ -6,7 +6,11 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env['ANALYZE'] === 'true',
 });
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+};
 
 export default withBundleAnalyzer(
   withSentryConfig(nextConfig, {
