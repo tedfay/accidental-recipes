@@ -44,7 +44,9 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <GoogleTagManager />
+        <div aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
+          <GoogleTagManager />
+        </div>
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
           <SiteHeader />
           <main id="main-content">
