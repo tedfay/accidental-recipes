@@ -13,6 +13,9 @@ import { listIngredients } from './tools/list-ingredients.js';
 import { getRecipesByIngredient } from './tools/get-recipes-by-ingredient.js';
 import { searchContent } from './tools/search-content.js';
 import { getIngredientFrequencies } from './tools/get-ingredient-frequencies.js';
+import { createRecipe } from './tools/create-recipe.js';
+import { updateRecipe } from './tools/update-recipe.js';
+import { publishRecipe } from './tools/publish-recipe.js';
 const TOOL_PERMISSIONS = {
     health_check: 'read',
     get_recipe: 'read',
@@ -123,6 +126,39 @@ function createConfiguredServer() {
             .optional()
             .describe('Max results (default: 50)'),
     }, async ({ query, include_ids, exclude_ids, limit }) => searchContent(query, include_ids, exclude_ids, limit ?? 50));
+    // ─── Write tools (2FI-203) ───────────────────────────────────────────────
+    const ingredientSchema = z.object({
+        rawString: z.string().describe('Original ingredient text, e.g. "2 cups flour"'),
+        quantity: z.string().nullable().optional().describe('Numeric quantity'),
+        unit: z.string().nullable().optional().describe('Unit of measure'),
+        preparation: z.string().nullable().optional().describe('Preparation note, e.g. "diced"'),
+        optional: z.boolean().optional().describe('Whether ingredient is optional'),
+    });
+    const stepSchema = z.object({
+        order: z.number().int().positive().describe('Step order (1-based)'),
+        text: z.string().describe('Step instruction text'),
+    });
+    server.tool('create_recipe', 'Create a new recipe record. Ingredients are created without entity resolution — enrichment runs separately.', {
+        slug: z.string().describe('URL-safe slug, e.g. "slow-cooker-chili"'),
+        title: z.string().describe('Recipe title'),
+        headnote: z.string().nullable().optional().describe('Introductory text'),
+        ingredients: z.array(ingredientSchema).min(1).describe('Ingredient list'),
+        steps: z.array(stepSchema).min(1).describe('Ordered instructions'),
+        derived_from_recipe_id: z.string().uuid().nullable().optional().describe('UUID of parent recipe if this is a variant'),
+        status: z.enum(['draft', 'live']).optional().describe('Default: draft'),
+    }, async (input) => createRecipe(input));
+    server.tool('update_recipe', 'Update an existing recipe by slug. Partial updates — only provided fields are changed. Content changes auto-increment version.', {
+        slug: z.string().describe('Slug of recipe to update'),
+        title: z.string().optional().describe('New title'),
+        headnote: z.string().nullable().optional().describe('New headnote'),
+        ingredients: z.array(ingredientSchema).min(1).optional().describe('Replacement ingredient list'),
+        steps: z.array(stepSchema).min(1).optional().describe('Replacement step list'),
+        derived_from_recipe_id: z.string().uuid().nullable().optional().describe('UUID of parent recipe'),
+    }, async (input) => updateRecipe(input));
+    server.tool('publish_recipe', 'Change recipe status from draft to live. Separate tool to keep the publish action explicit.', {
+        slug: z.string().describe('Slug of recipe to publish'),
+    }, async ({ slug }) => publishRecipe(slug));
+    // ─── Resource template ──────────────────────────────────────────────────
     server.resource('recipe', new ResourceTemplate('recipes://{slug}', { list: undefined }), async (uri, { slug }) => {
         const result = await getRecipe(String(slug));
         return {
@@ -193,6 +229,9 @@ if (PORT) {
                     get_recipes_by_ingredient: (a) => getRecipesByIngredient(a.wikidataIds, a.limit ?? 56),
                     get_ingredient_frequencies: () => getIngredientFrequencies(),
                     search_content: (a) => searchContent(a.query, a.include_ids, a.exclude_ids, a.limit ?? 50),
+                    create_recipe: (a) => createRecipe(a),
+                    update_recipe: (a) => updateRecipe(a),
+                    publish_recipe: (a) => publishRecipe(a.slug),
                 };
                 const handler = toolMap[tool];
                 if (!handler) {
