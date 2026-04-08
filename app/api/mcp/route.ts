@@ -17,12 +17,27 @@ interface McpRequest {
   args?: Record<string, unknown>;
 }
 
+// Write tools are blocked at the proxy layer — browser clients can never call them.
+// Defense-in-depth: even if someone obtains the read key, write tools are rejected here.
+const WRITE_TOOLS = new Set([
+  'create_recipe',
+  'update_recipe',
+  'publish_recipe',
+]);
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const body = (await request.json()) as McpRequest;
   const { tool, args = {} } = body;
 
   if (!tool) {
     return NextResponse.json({ error: 'Missing tool name' }, { status: 400 });
+  }
+
+  if (WRITE_TOOLS.has(tool)) {
+    return NextResponse.json(
+      { error: `Tool "${tool}" is not available through the browser proxy` },
+      { status: 403 },
+    );
   }
 
   try {

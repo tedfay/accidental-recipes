@@ -13,18 +13,21 @@ interface LinkedIngredientLine {
 export async function getSeoMetadata(slug: string): Promise<{ content: { type: 'text'; text: string }[] }> {
   const rows = await sql`
     SELECT
-      slug,
-      meta->>'titleOverride' AS title,
-      meta->>'description' AS description,
-      meta->>'canonicalUrl' AS canonical_url,
-      meta->>'ogImage' AS og_image,
-      headnote,
-      ingredients,
-      steps,
-      original_source,
-      created_at
-    FROM recipes
-    WHERE slug = ${slug}
+      r.slug,
+      r.meta->>'titleOverride' AS title,
+      r.meta->>'description' AS description,
+      r.meta->>'canonicalUrl' AS canonical_url,
+      r.meta->>'ogImage' AS og_image,
+      r.headnote,
+      r.ingredients,
+      r.steps,
+      r.original_source,
+      r.created_at,
+      r.updated_at,
+      parent.slug AS derived_from_slug
+    FROM recipes r
+    LEFT JOIN recipes parent ON r.derived_from_recipe_id = parent.id
+    WHERE r.slug = ${slug}
     LIMIT 1
   `;
 
@@ -55,6 +58,12 @@ export async function getSeoMetadata(slug: string): Promise<{ content: { type: '
     recipeIngredient: ingredients,
     recipeInstructions: steps,
     datePublished: (recipe['created_at'] as Date).toISOString().split('T')[0],
+    dateModified: recipe['updated_at']
+      ? (recipe['updated_at'] as Date).toISOString().split('T')[0]
+      : undefined,
+    isBasedOn: recipe['derived_from_slug']
+      ? `https://accidentalrecipes.com/recipes/${recipe['derived_from_slug']}`
+      : undefined,
     author: {
       '@type': 'Person',
       name: ((recipe['meta'] as Record<string, unknown>)?.['author'] as string | undefined) ?? 'Ted Fay',

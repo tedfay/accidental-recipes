@@ -52,9 +52,15 @@ async function callToolHttp<T>(
 ): Promise<T> {
   // MCP_SERVER_URL may point to .../mcp — derive the /tools/call endpoint
   const baseUrl = serverUrl.replace(/\/mcp$/, '');
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  const apiKey = process.env['MCP_API_KEY_READ'];
+  if (apiKey) {
+    headers['X-API-Key'] = apiKey;
+  }
+
   const res = await fetch(`${baseUrl}/tools/call`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({ tool, args }),
   });
 

@@ -13,6 +13,39 @@ import { listIngredients } from './tools/list-ingredients.js';
 import { getRecipesByIngredient } from './tools/get-recipes-by-ingredient.js';
 import { searchContent } from './tools/search-content.js';
 import { getIngredientFrequencies } from './tools/get-ingredient-frequencies.js';
+const TOOL_PERMISSIONS = {
+    health_check: 'read',
+    get_recipe: 'read',
+    search_recipes: 'read',
+    get_seo_metadata: 'read',
+    get_ingredient: 'read',
+    list_ingredients: 'read',
+    get_recipes_by_ingredient: 'read',
+    get_ingredient_frequencies: 'read',
+    search_content: 'read',
+    // Write tools (2FI-203)
+    create_recipe: 'write',
+    update_recipe: 'write',
+    publish_recipe: 'write',
+};
+const WRITE_TOOLS = new Set(Object.entries(TOOL_PERMISSIONS)
+    .filter(([, level]) => level === 'write')
+    .map(([name]) => name));
+/**
+ * Validate API key and return permission level.
+ * Returns null if key is missing or invalid.
+ */
+function validateApiKey(key) {
+    if (!key)
+        return null;
+    const readKey = process.env['MCP_API_KEY_READ'];
+    const writeKey = process.env['MCP_API_KEY_WRITE'];
+    if (key === writeKey)
+        return 'write';
+    if (key === readKey)
+        return 'read';
+    return null;
+}
 // ─── Tool & resource registration ───────────────────────────────────────────
 // Extracted into a function so HTTP mode can create a fresh McpServer per
 // request (stateless Streamable HTTP requires this).
@@ -108,9 +141,17 @@ function createConfiguredServer() {
 const PORT = process.env['PORT'];
 if (PORT) {
     // HTTP mode — used by Railway and any production deployment.
-    // Stateless: a new McpServer + transport is created per request.
-    // This is the correct pattern for StreamableHTTPServerTransport
-    // in stateless mode (sessionIdGenerator: undefined).
+    // Validate auth keys at startup (fail-at-the-boundary).
+    const readKey = process.env['MCP_API_KEY_READ'];
+    const writeKey = process.env['MCP_API_KEY_WRITE'];
+    if (!readKey || !writeKey) {
+        console.error('FATAL: MCP_API_KEY_READ and MCP_API_KEY_WRITE must be set in HTTP mode');
+        process.exit(1);
+    }
+    if (readKey === writeKey) {
+        console.error('FATAL: MCP_API_KEY_READ and MCP_API_KEY_WRITE must be different values');
+        process.exit(1);
+    }
     const httpServer = createServer(async (req, res) => {
         // Health check for Railway
         if (req.method === 'GET' && req.url === '/health') {
@@ -129,6 +170,20 @@ if (PORT) {
                     chunks.push(chunk);
                 }
                 const { tool, args = {} } = JSON.parse(Buffer.concat(chunks).toString());
+                // Auth check
+                const apiKey = req.headers['x-api-key'];
+                const permission = validateApiKey(apiKey);
+                if (!permission) {
+                    res.writeHead(401, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Missing or invalid API key' }));
+                    return;
+                }
+                const requiredLevel = TOOL_PERMISSIONS[tool] ?? 'write'; // unknown tools require write
+                if (requiredLevel === 'write' && permission !== 'write') {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: `Tool "${tool}" requires write permission` }));
+                    return;
+                }
                 const toolMap = {
                     get_recipe: (a) => getRecipe(a.slug),
                     search_recipes: (a) => searchRecipes(a.query, a.limit ?? 10),

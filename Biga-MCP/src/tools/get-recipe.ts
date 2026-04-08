@@ -21,9 +21,14 @@ interface LinkedIngredientLine {
 
 export async function getRecipe(slug: string): Promise<{ content: { type: 'text'; text: string }[] }> {
   const rows = await sql`
-    SELECT id, slug, meta->>'titleOverride' AS title, status, original_source, headnote, ingredients, steps, meta, enrichment, created_at
-    FROM recipes
-    WHERE slug = ${slug}
+    SELECT
+      r.id, r.slug, r.meta->>'titleOverride' AS title, r.status, r.original_source,
+      r.headnote, r.ingredients, r.steps, r.meta, r.enrichment,
+      r.created_at, r.updated_at, r.derived_from_recipe_id,
+      parent.slug AS derived_from_slug
+    FROM recipes r
+    LEFT JOIN recipes parent ON r.derived_from_recipe_id = parent.id
+    WHERE r.slug = ${slug}
     LIMIT 1
   `;
 

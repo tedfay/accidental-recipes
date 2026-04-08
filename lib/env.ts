@@ -21,6 +21,14 @@ if (isNetlify && !hasMcpServerUrl) {
   );
 }
 
+// MCP_API_KEY_READ is required when talking to Railway over HTTP.
+if (hasMcpServerUrl && !process.env['MCP_API_KEY_READ']) {
+  console.error(
+    '[env] MCP_API_KEY_READ is not set. ' +
+      'All MCP calls to Railway will be rejected (401).',
+  );
+}
+
 // DATABASE_URL is only required when running locally without MCP_SERVER_URL.
 // On Netlify (build and runtime), the frontend talks to Railway — no database needed.
 if (!hasMcpServerUrl && !isNetlify) {
