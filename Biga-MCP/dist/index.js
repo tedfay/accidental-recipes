@@ -72,7 +72,7 @@ function createConfiguredServer() {
         limit: z.number().int().min(1).max(200).optional().describe('Max results (default: 56)'),
     }, async ({ wikidataIds, limit }) => getRecipesByIngredient(wikidataIds, limit ?? 56));
     server.tool('get_ingredient_frequencies', 'Return recipe count per ingredient, keyed by Wikidata ID. Used for filter panel sorting.', {}, async () => getIngredientFrequencies());
-    server.tool('search_content', 'Search recipes by text query and/or ingredient filters. All parameters optional — any combination is valid.', {
+    server.tool('search_content', 'Search recipes by text query and/or ingredient filters. All parameters optional — any combination is valid. Text queries match against title, headnote, ingredient strings, and entity canonical names and aliases (e.g. searching "pignoli" finds recipes with pine nuts).', {
         query: z.string().optional().describe('Full text search terms, e.g. "pumpkin muffins"'),
         include_ids: z
             .array(z.string())

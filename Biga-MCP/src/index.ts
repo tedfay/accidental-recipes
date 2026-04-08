@@ -124,7 +124,7 @@ function createConfiguredServer(): McpServer {
 
   server.tool(
     'search_content',
-    'Search recipes by text query and/or ingredient filters. All parameters optional — any combination is valid.',
+    'Search recipes by text query and/or ingredient filters. All parameters optional — any combination is valid. Text queries match against title, headnote, ingredient strings, and entity canonical names and aliases (e.g. searching "pignoli" finds recipes with pine nuts).',
     {
       query: z.string().optional().describe('Full text search terms, e.g. "pumpkin muffins"'),
       include_ids: z
