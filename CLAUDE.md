@@ -153,6 +153,15 @@ validated against P31 (instance of) or P279 (subclass of) before
 acceptance. Do not write the top result blindly. If validation fails,
 write null rather than a wrong entity.
 
+**JSONB insertion pattern — `sql.json()` only.**
+Always use `sql.json(value)` for JSONB columns in postgres.js tagged
+templates. Never use `JSON.stringify(value)::jsonb` — this double-encodes
+and stores a JSON string instead of a JSON object/array. Postgres accepts
+it silently, but reads return a string instead of a parsed object.
+Reference: `execute-import.ts` uses `t.json()`, `backfill-signals.ts`
+uses `sql.json()` — both correct. The `::jsonb` cast is unnecessary
+when using `sql.json()`.
+
 **Spawned child processes require explicit env passing.**
 Any code that spawns a child process must pass `env: { ...process.env }`
 in spawn options. Omitting this causes DATABASE_URL and other environment

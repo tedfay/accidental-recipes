@@ -52,8 +52,7 @@ export async function createRecipe(
   }));
 
   const status = input.status ?? 'draft';
-  const meta = { version: 1 };
-
+  const metaObj = { version: 1, titleOverride: input.title };
   const derivedId = input.derived_from_recipe_id ?? null;
 
   if (derivedId) {
@@ -61,8 +60,8 @@ export async function createRecipe(
       INSERT INTO recipes (slug, status, headnote, ingredients, steps, derived_from_recipe_id, meta)
       VALUES (
         ${input.slug}, ${status}, ${input.headnote ?? null},
-        ${JSON.stringify(ingredientLines)}::jsonb, ${JSON.stringify(input.steps)}::jsonb,
-        ${derivedId}::uuid, ${JSON.stringify({ ...meta, titleOverride: input.title })}::jsonb
+        ${sql.json(ingredientLines)}, ${sql.json(input.steps as never)},
+        ${derivedId}::uuid, ${sql.json(metaObj)}
       )
     `;
   } else {
@@ -70,12 +69,11 @@ export async function createRecipe(
       INSERT INTO recipes (slug, status, headnote, ingredients, steps, meta)
       VALUES (
         ${input.slug}, ${status}, ${input.headnote ?? null},
-        ${JSON.stringify(ingredientLines)}::jsonb, ${JSON.stringify(input.steps)}::jsonb,
-        ${JSON.stringify({ ...meta, titleOverride: input.title })}::jsonb
+        ${sql.json(ingredientLines)}, ${sql.json(input.steps as never)},
+        ${sql.json(metaObj)}
       )
     `;
   }
 
-  // Return the full recipe via get_recipe
   return getRecipe(input.slug);
 }

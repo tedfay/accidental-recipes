@@ -3,8 +3,19 @@ import { getRecipe } from './get-recipe.js';
 import { validateUpdateRecipe, type UpdateRecipeInput } from './validation.js';
 
 export async function updateRecipe(
-  input: UpdateRecipeInput,
+  rawInput: UpdateRecipeInput,
 ): Promise<{ content: { type: 'text'; text: string }[] }> {
+  // Defensive: MCP stdio transport may deliver arrays as JSON strings
+  const input: UpdateRecipeInput = {
+    ...rawInput,
+    ingredients: rawInput.ingredients !== undefined
+      ? (typeof rawInput.ingredients === 'string' ? JSON.parse(rawInput.ingredients) : rawInput.ingredients)
+      : undefined,
+    steps: rawInput.steps !== undefined
+      ? (typeof rawInput.steps === 'string' ? JSON.parse(rawInput.steps) : rawInput.steps)
+      : undefined,
+  };
+
   // Validate input
   const errors = validateUpdateRecipe(input);
   if (errors.length > 0) {
@@ -40,22 +51,17 @@ export async function updateRecipe(
     }
   }
 
-  // Build partial update — only SET columns that were provided
-  // We build the SET clause dynamically based on what fields are present
-  const updates: string[] = [];
-  const values: unknown[] = [];
-
+  // Build partial update — only SET columns that were provided.
+  // Each field is updated individually. Postgres triggers handle
+  // updated_at and version increment automatically.
   if (input.title !== undefined) {
-    // Title lives in meta.titleOverride
     const currentMeta = (existing['meta'] as Record<string, unknown>) ?? {};
     const updatedMeta = { ...currentMeta, titleOverride: input.title };
-    updates.push('meta');
-    values.push(JSON.stringify(updatedMeta));
+    await sql`UPDATE recipes SET meta = ${sql.json(updatedMeta)} WHERE slug = ${input.slug}`;
   }
 
   if (input.headnote !== undefined) {
-    updates.push('headnote');
-    values.push(input.headnote);
+    await sql`UPDATE recipes SET headnote = ${input.headnote} WHERE slug = ${input.slug}`;
   }
 
   if (input.ingredients !== undefined) {
@@ -68,72 +74,18 @@ export async function updateRecipe(
       ingredientId: null,
       entity: null,
     }));
-    updates.push('ingredients');
-    values.push(JSON.stringify(ingredientLines));
+    await sql`UPDATE recipes SET ingredients = ${sql.json(ingredientLines)} WHERE slug = ${input.slug}`;
   }
 
   if (input.steps !== undefined) {
-    updates.push('steps');
-    values.push(JSON.stringify(input.steps));
+    await sql`UPDATE recipes SET steps = ${sql.json(input.steps as never)} WHERE slug = ${input.slug}`;
   }
 
   if (input.derived_from_recipe_id !== undefined) {
-    updates.push('derived_from_recipe_id');
-    values.push(input.derived_from_recipe_id);
-  }
-
-  if (updates.length === 0) {
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify({ error: 'No fields provided to update' }),
-      }],
-    };
-  }
-
-  // Execute update using dynamic SQL
-  // postgres.js tagged templates don't support dynamic column names easily,
-  // so we build individual SET clauses
-  if (updates.includes('meta') && updates.includes('headnote') && updates.includes('ingredients') && updates.includes('steps')) {
-    const metaVal = values[updates.indexOf('meta')] as string;
-    const headnoteVal = values[updates.indexOf('headnote')] as string | null;
-    const ingredientsVal = values[updates.indexOf('ingredients')] as string;
-    const stepsVal = values[updates.indexOf('steps')] as string;
-    await sql`
-      UPDATE recipes SET
-        meta = ${metaVal}::jsonb,
-        headnote = ${headnoteVal},
-        ingredients = ${ingredientsVal}::jsonb,
-        steps = ${stepsVal}::jsonb
-      WHERE slug = ${input.slug}
-    `;
-  } else {
-    // Handle partial updates one field at a time
-    // Version trigger and updated_at trigger fire on each UPDATE
-    for (let i = 0; i < updates.length; i++) {
-      const field = updates[i];
-      const value = values[i];
-      switch (field) {
-        case 'meta':
-          await sql`UPDATE recipes SET meta = ${value as string}::jsonb WHERE slug = ${input.slug}`;
-          break;
-        case 'headnote':
-          await sql`UPDATE recipes SET headnote = ${value as string | null} WHERE slug = ${input.slug}`;
-          break;
-        case 'ingredients':
-          await sql`UPDATE recipes SET ingredients = ${value as string}::jsonb WHERE slug = ${input.slug}`;
-          break;
-        case 'steps':
-          await sql`UPDATE recipes SET steps = ${value as string}::jsonb WHERE slug = ${input.slug}`;
-          break;
-        case 'derived_from_recipe_id':
-          if (value) {
-            await sql`UPDATE recipes SET derived_from_recipe_id = ${value as string}::uuid WHERE slug = ${input.slug}`;
-          } else {
-            await sql`UPDATE recipes SET derived_from_recipe_id = NULL WHERE slug = ${input.slug}`;
-          }
-          break;
-      }
+    if (input.derived_from_recipe_id) {
+      await sql`UPDATE recipes SET derived_from_recipe_id = ${input.derived_from_recipe_id}::uuid WHERE slug = ${input.slug}`;
+    } else {
+      await sql`UPDATE recipes SET derived_from_recipe_id = NULL WHERE slug = ${input.slug}`;
     }
   }
 
