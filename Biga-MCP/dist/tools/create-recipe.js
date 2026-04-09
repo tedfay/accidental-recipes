@@ -1,6 +1,7 @@
 import { sql } from '../db.js';
 import { getRecipe } from './get-recipe.js';
 import { validateCreateRecipe } from './validation.js';
+import { notifyIndexNow } from '../hooks/notify-indexnow.js';
 export async function createRecipe(input) {
     // Validate input
     const errors = validateCreateRecipe(input);
@@ -66,6 +67,9 @@ export async function createRecipe(input) {
         ${sql.json(metaObj)}
       )
     `;
+    }
+    if (status === 'live') {
+        notifyIndexNow([input.slug]);
     }
     return getRecipe(input.slug);
 }

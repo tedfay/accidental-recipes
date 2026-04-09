@@ -1,5 +1,6 @@
 import { sql } from '../db.js';
 import { getRecipe } from './get-recipe.js';
+import { notifyIndexNow } from '../hooks/notify-indexnow.js';
 export async function publishRecipe(slug) {
     if (!slug) {
         return {
@@ -28,5 +29,6 @@ export async function publishRecipe(slug) {
         };
     }
     await sql `UPDATE recipes SET status = 'live' WHERE slug = ${slug}`;
+    notifyIndexNow([slug]);
     return getRecipe(slug);
 }

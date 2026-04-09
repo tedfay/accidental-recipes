@@ -1,6 +1,7 @@
 import { sql } from '../db.js';
 import { getRecipe } from './get-recipe.js';
 import { validateUpdateRecipe } from './validation.js';
+import { notifyIndexNow } from '../hooks/notify-indexnow.js';
 export async function updateRecipe(rawInput) {
     // Defensive: MCP stdio transport may deliver arrays as JSON strings
     const input = {
@@ -78,5 +79,6 @@ export async function updateRecipe(rawInput) {
             await sql `UPDATE recipes SET derived_from_recipe_id = NULL WHERE slug = ${input.slug}`;
         }
     }
+    notifyIndexNow([input.slug]);
     return getRecipe(input.slug);
 }
