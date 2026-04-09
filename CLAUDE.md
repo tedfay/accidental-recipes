@@ -431,6 +431,40 @@ until it is confirmed present in live MCP responses.
 
 ---
 
+## Sitemap and IndexNow
+
+**Sitemap** (`app/sitemap.ts`) — dynamic, MCP-driven, lastmod-only.
+- Uses `searchContent(limit: 200)` and `listIngredients()` for URL discovery
+- `lastmod` derived from `updated_at ?? created_at` on recipe entries
+- **No `changeFrequency` or `priority`** — Google ignores both entirely
+- Ingredient entries omit `lastmod` (no timestamps in current schema)
+- Static entries (`/`, `/ingredients`) use the most recent recipe timestamp
+- MCP failures are logged via `console.error` and degrade to static entries only
+
+**robots.txt** (`app/robots.ts`) — dynamic, environment-aware.
+- Uses `siteConfig.url` for the sitemap URL — correct across staging/production
+- Do NOT create a `public/robots.txt` — it will shadow the dynamic route
+
+**IndexNow** — proactive URL submission to Bing/Yandex/Seznam/Naver.
+- API key file: `public/{key}.txt` (key value = filename without extension)
+- Submission library: `lib/indexnow.ts` — fire-and-forget, never throws
+- Webhook: `POST /api/indexnow` — accepts `{ slugs: string[] }`, auth via
+  `Bearer INDEXNOW_SUBMIT_KEY` header
+- MCP hook: `Biga-MCP/src/hooks/notify-indexnow.ts` — call after
+  `publish_recipe` and `update_recipe` mutations
+- Config in `lib/site-config.ts` under `indexNow` block
+
+**Env vars for IndexNow:**
+- `INDEXNOW_API_KEY` — the key (same value as key filename), set on Netlify
+- `INDEXNOW_SUBMIT_KEY` — shared secret for webhook auth, set on both
+  Netlify and Railway (MCP server)
+- `FRONTEND_URL` — set on Railway so MCP hooks know where to POST
+
+**For new Biga sites:** generate a UUID key, create `public/{key}.txt`,
+set 3 env vars. No code changes needed.
+
+---
+
 ## Deferred — do not build these now
 
 | Ticket | Feature | Notes |

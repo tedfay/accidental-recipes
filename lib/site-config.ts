@@ -30,4 +30,9 @@ export const siteConfig = {
     storageKey: 'biga_consent',
     version: '1',
   },
+
+  indexNow: {
+    apiKey: process.env['INDEXNOW_API_KEY'] || null,
+    submitKey: process.env['INDEXNOW_SUBMIT_KEY'] || null,
+  },
 } as const;

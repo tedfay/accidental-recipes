@@ -5,31 +5,52 @@ import { siteConfig } from '@/lib/site-config';
 /**
  * Dynamic sitemap — queries MCP for all published content.
  *
- * Portable: uses siteConfig.url for the base, MCP client for data.
- * To adapt for another Biga site, only siteConfig needs to change.
+ * Uses lastmod as the sole meaningful signal (Google ignores changeFrequency
+ * and priority entirely). Portable: uses siteConfig.url for the base,
+ * MCP client for data. To adapt for another Biga site, only siteConfig
+ * needs to change.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url;
 
   const [rawRecipes, rawIngredients] = await Promise.all([
-    searchContent(undefined, undefined, undefined, 200).catch(() => []),
-    listIngredients().catch(() => []),
+    searchContent(undefined, undefined, undefined, 200).catch((err) => {
+      console.error('[sitemap] MCP searchContent failed:', err);
+      return [];
+    }),
+    listIngredients().catch((err) => {
+      console.error('[sitemap] MCP listIngredients failed:', err);
+      return [];
+    }),
   ]);
 
   const recipes = normalize(rawRecipes);
   const ingredients = normalize(rawIngredients);
 
+  // Derive lastModified for static pages from the most recent recipe timestamp
+  const latestRecipeDate = recipes.reduce<string | null>((latest, r) => {
+    const ts = (r.updated_at as string) ?? (r.created_at as string) ?? null;
+    if (!ts) return latest;
+    return !latest || ts > latest ? ts : latest;
+  }, null);
+
   const entries: MetadataRoute.Sitemap = [
-    { url: base, changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${base}/ingredients`, changeFrequency: 'weekly', priority: 0.6 },
+    {
+      url: base,
+      ...(latestRecipeDate ? { lastModified: new Date(latestRecipeDate) } : {}),
+    },
+    {
+      url: `${base}/ingredients`,
+      ...(latestRecipeDate ? { lastModified: new Date(latestRecipeDate) } : {}),
+    },
   ];
 
   for (const r of recipes) {
     if (r.slug) {
+      const ts = (r.updated_at as string) ?? (r.created_at as string) ?? null;
       entries.push({
         url: `${base}/recipes/${r.slug}`,
-        changeFrequency: 'monthly',
-        priority: 0.8,
+        ...(ts ? { lastModified: new Date(ts) } : {}),
       });
     }
   }
@@ -38,8 +59,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (i.wikidata_id) {
       entries.push({
         url: `${base}/ingredients/${i.wikidata_id}`,
-        changeFrequency: 'monthly',
-        priority: 0.5,
       });
     }
   }

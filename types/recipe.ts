@@ -64,6 +64,8 @@ export interface SearchResult {
   headnote: string | null;
   ingredient_count: number;
   rank?: number;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 /** Full recipe as returned by get_recipe MCP tool */
