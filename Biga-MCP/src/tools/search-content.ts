@@ -101,6 +101,7 @@ export async function searchContent(
             r.headnote,
             jsonb_array_length(r.ingredients) AS ingredient_count,
             r.created_at,
+            r.updated_at,
             ${sql(joinColumn)} AS entity_uuids,
             (
               setweight(to_tsvector('english', coalesce(r.meta->>'titleOverride', '')), 'A') ||
@@ -117,7 +118,8 @@ export async function searchContent(
         )
         SELECT
           slug, title, headnote, ingredient_count,
-          ts_rank(vec, plainto_tsquery('english', ${trimmedQuery!})) AS rank
+          ts_rank(vec, plainto_tsquery('english', ${trimmedQuery!})) AS rank,
+          created_at, updated_at
         FROM fts
         WHERE vec @@ plainto_tsquery('english', ${trimmedQuery!})
           ${includeUuids !== null
@@ -137,7 +139,9 @@ export async function searchContent(
           r.meta->>'titleOverride' AS title,
           r.headnote,
           jsonb_array_length(r.ingredients) AS ingredient_count,
-          NULL::float AS rank
+          NULL::float AS rank,
+          r.created_at,
+          r.updated_at
         FROM recipes r
         WHERE r.status = 'live'
           ${includeUuids !== null

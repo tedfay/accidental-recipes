@@ -1,21 +1,11 @@
 import { sql } from '../db.js';
 import { getRecipe } from './get-recipe.js';
 import { validateUpdateRecipe, type UpdateRecipeInput } from './validation.js';
+import { notifyIndexNow } from '../hooks/notify-indexnow.js';
 
 export async function updateRecipe(
-  rawInput: UpdateRecipeInput,
+  input: UpdateRecipeInput,
 ): Promise<{ content: { type: 'text'; text: string }[] }> {
-  // Defensive: MCP stdio transport may deliver arrays as JSON strings
-  const input: UpdateRecipeInput = {
-    ...rawInput,
-    ingredients: rawInput.ingredients !== undefined
-      ? (typeof rawInput.ingredients === 'string' ? JSON.parse(rawInput.ingredients) : rawInput.ingredients)
-      : undefined,
-    steps: rawInput.steps !== undefined
-      ? (typeof rawInput.steps === 'string' ? JSON.parse(rawInput.steps) : rawInput.steps)
-      : undefined,
-  };
-
   // Validate input
   const errors = validateUpdateRecipe(input);
   if (errors.length > 0) {
@@ -28,7 +18,7 @@ export async function updateRecipe(
   }
 
   // Check recipe exists
-  const [existing] = await sql`SELECT id, meta FROM recipes WHERE slug = ${input.slug} LIMIT 1`;
+  const [existing] = await sql`SELECT id, status, meta FROM recipes WHERE slug = ${input.slug} LIMIT 1`;
   if (!existing) {
     return {
       content: [{
@@ -87,6 +77,12 @@ export async function updateRecipe(
     } else {
       await sql`UPDATE recipes SET derived_from_recipe_id = NULL WHERE slug = ${input.slug}`;
     }
+  }
+
+  // Only notify IndexNow when the updated recipe is live — draft URLs
+  // are not on the public site and would 404 from the IndexNow callers.
+  if (existing['status'] === 'live') {
+    notifyIndexNow([input.slug]);
   }
 
   return getRecipe(input.slug);

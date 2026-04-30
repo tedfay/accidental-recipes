@@ -153,6 +153,18 @@ validated against P31 (instance of) or P279 (subclass of) before
 acceptance. Do not write the top result blindly. If validation fails,
 write null rather than a wrong entity.
 
+**Biga-MCP `src/` and `dist/` must stay in sync.**
+Production (Railway) ships from `Biga-MCP/dist/` because the MCP server
+lives inside this repo (no separate publish step). The compiled `dist/`
+is the deployed truth. **Never edit `dist/` files directly.** Edit `src/`,
+run `npm run build`, and commit both in the same commit. A pre-commit
+script (`Biga-MCP/scripts/check-build-fresh.sh`) verifies that `dist/`
+is up-to-date with `src/` and blocks the commit otherwise. If you see
+"dist/ is stale" — run `npm run build` from `Biga-MCP/`. Past divergence
+incidents (2026-04 IndexNow hooks added only to `dist/`; `updated_at`
+added to `dist/tools/search-content.js` only) silently regressed when
+later rebuilds dropped the unmirrored changes.
+
 **JSONB insertion pattern — `sql.json()` only.**
 Always use `sql.json(value)` for JSONB columns in postgres.js tagged
 templates. Never use `JSON.stringify(value)::jsonb` — this double-encodes

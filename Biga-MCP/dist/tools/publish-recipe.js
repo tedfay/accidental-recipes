@@ -20,13 +20,11 @@ export async function publishRecipe(slug) {
                 }],
         };
     }
+    // Idempotent: if already live, return current state without re-firing IndexNow.
+    // Agentic callers retry on transient failures; non-idempotent publish forces
+    // them to parse error strings as success-by-other-means.
     if (existing['status'] === 'live') {
-        return {
-            content: [{
-                    type: 'text',
-                    text: JSON.stringify({ error: `Recipe "${slug}" is already live` }),
-                }],
-        };
+        return getRecipe(slug);
     }
     await sql `UPDATE recipes SET status = 'live' WHERE slug = ${slug}`;
     notifyIndexNow([slug]);

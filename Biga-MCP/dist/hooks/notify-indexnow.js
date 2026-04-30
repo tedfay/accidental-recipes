@@ -7,9 +7,9 @@
  */
 const FRONTEND_URL = process.env['FRONTEND_URL'] || null;
 const SUBMIT_KEY = process.env['INDEXNOW_SUBMIT_KEY'] || null;
-
 export function notifyIndexNow(slugs) {
-    if (!FRONTEND_URL || !SUBMIT_KEY || slugs.length === 0) return;
+    if (!FRONTEND_URL || !SUBMIT_KEY || slugs.length === 0)
+        return;
     const url = `${FRONTEND_URL}/api/indexnow`;
     fetch(url, {
         method: 'POST',

@@ -10,7 +10,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check-build-fresh": "bash scripts/check-build-fresh.sh"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
