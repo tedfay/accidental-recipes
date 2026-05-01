@@ -104,6 +104,20 @@ They do NOT self-fetch through the API route — Netlify serverless
 functions cannot reach `localhost`. The `/api/mcp` route exists solely
 as a proxy for browser-originated requests from client components.
 
+**Biga-MCP HTTP auth (2FI-205, 2FI-241).**
+Both authenticated endpoints require an `x-api-key` header.
+- `/tools/call` — per-tool permission map. Read tools accept either
+  `MCP_API_KEY_READ` or `MCP_API_KEY_WRITE`; write tools require
+  `MCP_API_KEY_WRITE`. The Next.js bridge uses this with the read key.
+- `/mcp` (Streamable HTTP, MCP-native clients like Claude Chat) — exposes
+  the full toolkit including writes, so requires `MCP_API_KEY_WRITE`.
+  Read-only MCP-native sessions are not supported on this path; route
+  read-only clients through `/tools/call` instead.
+- `/health` — no auth.
+
+Returns 401 when the key is missing or invalid; 403 when a valid key
+lacks the required permission level.
+
 **Key files:**
 - `lib/mcp-transport.ts` — transport selection (HTTP vs stdio)
 - `lib/mcp-client.ts` — typed wrappers, all tool functions
