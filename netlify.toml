@@ -1,6 +1,12 @@
 # ── Build ─────────────────────────────────────────────────────────
+# Pre-build defense: verify Biga-MCP/dist/ is in sync with src/ before
+# deploying the frontend. Reasoning: if MCP dist is stale, Railway is
+# running a broken/missing version of the backend, and we shouldn't
+# also deploy the frontend pointing at it. ~30s overhead from MCP
+# npm install + tsc rebuild for comparison. Obsoleted once Railway
+# builds Biga-MCP from source (2FI-239).
 [build]
-  command = "npm run build"
+  command = "(cd Biga-MCP && npm install --no-audit --no-fund && npm run check-build-fresh) && npm run build"
   publish = ".next"
 
 # ── Security response headers (2FI-167) ──────────────────────────

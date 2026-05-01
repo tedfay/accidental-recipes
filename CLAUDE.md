@@ -157,13 +157,16 @@ write null rather than a wrong entity.
 Production (Railway) ships from `Biga-MCP/dist/` because the MCP server
 lives inside this repo (no separate publish step). The compiled `dist/`
 is the deployed truth. **Never edit `dist/` files directly.** Edit `src/`,
-run `npm run build`, and commit both in the same commit. A pre-commit
-script (`Biga-MCP/scripts/check-build-fresh.sh`) verifies that `dist/`
-is up-to-date with `src/` and blocks the commit otherwise. If you see
-"dist/ is stale" — run `npm run build` from `Biga-MCP/`. Past divergence
-incidents (2026-04 IndexNow hooks added only to `dist/`; `updated_at`
-added to `dist/tools/search-content.js` only) silently regressed when
-later rebuilds dropped the unmirrored changes.
+run `npm run build` from `Biga-MCP/`, and commit both in the same commit.
+A pre-commit hook at `.githooks/pre-commit` enforces this — it
+auto-installs via the root `package.json` `prepare` script when you run
+`npm install` (sets `core.hooksPath`). The Netlify build also runs the
+freshness check as defense-in-depth. If you see "dist/ is stale" —
+run `npm run build` from `Biga-MCP/`. Past divergence incidents
+(2026-04 IndexNow hooks added only to `dist/`; `updated_at` added to
+`dist/tools/search-content.js` only) silently regressed when later
+rebuilds dropped the unmirrored changes. Both the hook and the Netlify
+check go away when 2FI-239 lands (Railway builds from source).
 
 **JSONB insertion pattern — `sql.json()` only.**
 Always use `sql.json(value)` for JSONB columns in postgres.js tagged

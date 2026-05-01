@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Pre-commit hook: enforce Biga-MCP src/ ↔ dist/ sync.
+#
+# Runs only when staged files include anything under Biga-MCP/src/ or
+# Biga-MCP/dist/. Skips for unrelated commits (no perf cost).
+#
+# Why: production (Railway) ships from Biga-MCP/dist/ with no build step,
+# so src/ changes that aren't reflected in dist/ silently regress on the
+# next rebuild. Two prior incidents (2026-04 IndexNow hooks; updated_at
+# in search-content) lost work this way.
+#
+# To bypass intentionally (rare — usually you should fix the underlying
+# issue): `git commit --no-verify`. Don't make a habit of it.
+
+set -euo pipefail
+
+# Detect MCP-touching commits
+mcp_files=$(git diff --cached --name-only | grep -E '^Biga-MCP/(src|dist)/' || true)
+if [ -z "$mcp_files" ]; then
+  exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+MCP_DIR="$REPO_ROOT/Biga-MCP"
+
+# Ensure deps are present so tsc can run
+if [ ! -d "$MCP_DIR/node_modules" ]; then
+  echo "pre-commit: Biga-MCP/node_modules missing." >&2
+  echo "  Run: (cd Biga-MCP && npm install)" >&2
+  exit 1
+fi
+
+# Run the freshness check (rebuilds to a temp dir, diffs against committed dist)
+if ! bash "$MCP_DIR/scripts/check-build-fresh.sh"; then
+  echo "" >&2
+  echo "pre-commit: Biga-MCP/dist/ is out of sync with src/." >&2
+  echo "  Run: (cd Biga-MCP && npm run build) and stage the dist/ changes." >&2
+  exit 1
+fi
+
+exit 0
