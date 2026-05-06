@@ -14,3 +14,6 @@ out/
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code per-session worktrees (branches still tracked via .git/worktrees/)
+.claude/worktrees/

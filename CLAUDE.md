@@ -1,5 +1,7 @@
 # Accidental Recipes — Frontend CLAUDE.md
 
+Last updated: 2026-04-10
+
 > Read this file completely before writing any code, creating any files,
 > or running any commands. These are constraints, not suggestions.
 > Also read the root Biga CLAUDE.md at:
@@ -427,6 +429,8 @@ respects the user's intelligence.
 | Nutrition / dietary / allergy | Not in data shape | Zone omitted entirely |
 | Step-level images | Not in data shape | Empty optional slot in step component |
 | Wikidata `sameAs` in JSON-LD | Missing pending 2FI-124 | Inject what `get_seo_metadata` returns |
+| Content relationships (isPartOf, isBasedOn etc.) | Not yet in data shape | Zone omitted entirely — do not construct from frontend |
+| prepTime / cookTime / totalTime | Not yet in data shape | Zone omitted entirely when null |
 
 ---
 
@@ -494,6 +498,8 @@ set 3 env vars. No code changes needed.
 | — | Static generation / generateStaticParams | HTTP transport resolved; generateStaticParams can now be implemented |
 | — | Related recipes | Future rev |
 | — | Step-level timer extraction | Future rev |
+| TBD | Content relationships display | isPartOf, hasPart, isBasedOn, isRelatedTo — will come from MCP get_relationships tool. Do not construct in frontend. |
+| TBD | isBasedOn / isPartOf in JSON-LD | Will be emitted by get_seo_metadata once content_relationships table exists. Do not add to frontend JSON-LD construction. |
 
 ---
 

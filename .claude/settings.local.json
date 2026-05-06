@@ -27,7 +27,30 @@
       "Bash(curl -s -X POST http://localhost:3002/api/mcp -H \"Content-Type: application/json\" -d '{\"\"\"\"tool\"\"\"\":\"\"\"\"search_recipes\"\"\"\",\"\"\"\"args\"\"\"\":{\"\"\"\"query\"\"\"\":\"\"\"\"\"\"\"\",\"\"\"\"limit\"\"\"\":2}}')",
       "mcp__biga__search_content",
       "Bash(curl -s http://localhost:3000/sitemap.xml)",
-      "Bash(grep [sitemap] C:UserstedfaAppDataLocalTempclaudeC--Users-tedfa-OneDrive-2-Find-Marketing-Accidental-Recipes-Bigaa998eb87-2cbe-4f1e-8191-d5599d6f016ctasksbkuvnlno2.output)"
+      "Bash(grep [sitemap] C:UserstedfaAppDataLocalTempclaudeC--Users-tedfa-OneDrive-2-Find-Marketing-Accidental-Recipes-Bigaa998eb87-2cbe-4f1e-8191-d5599d6f016ctasksbkuvnlno2.output)",
+      "Bash(curl -sI https://accidentalrecipes.com/favicon-32x32.png)",
+      "Bash(curl -s https://accidentalrecipes.com)",
+      "Bash(ls .env*)",
+      "Read(//c/Users/tedfa/OneDrive/2 Find Marketing/Biga/**)",
+      "Bash(git -C 'C:/Users/tedfa/OneDrive/2 Find Marketing/Biga' status)",
+      "Bash(gh repo:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.phfiiukgucoxmgiyamxg:kungub-4qobqo-Xukrik@aws-0-us-west-2.pooler.supabase.com:5432/postgres\" node --input-type=module -e \":*)",
+      "Bash(curl -s -X POST \"https://biga-mcp-production.up.railway.app/tools/call\" -H \"Content-Type: application/json\" -d '{\"\"\"\"tool\"\"\"\":\"\"\"\"search_content\"\"\"\",\"\"\"\"args\"\"\"\":{\"\"\"\"query\"\"\"\":\"\"\"\"salt\"\"\"\",\"\"\"\"limit\"\"\"\":3}}')",
+      "Bash(railway status:*)",
+      "Bash(gh api:*)",
+      "Bash(curl -s \"https://accidentalrecipes.com/api/mcp\" -X POST -H \"Content-Type: application/json\" -d '{\"\"\"\"tool\"\"\"\":\"\"\"\"search_content\"\"\"\",\"\"\"\"args\"\"\"\":{\"\"\"\"query\"\"\"\":\"\"\"\"salt\"\"\"\",\"\"\"\"limit\"\"\"\":3}}')",
+      "Bash(curl -s \"https://accidentalrecipes.com/api/mcp\" -X POST -H \"Content-Type: application/json\" -d '{\"\"tool\"\":\"\"health_check\"\",\"\"args\"\":{}}')",
+      "Bash(find '/c/Users/tedfa/OneDrive/2 Find Marketing/Biga/Biga-MCP' -name *.ts -o -name *.js -o -name Dockerfile -o -name Procfile -o -name railway.*)",
+      "Bash(curl -s -X POST \"https://accidental-recipes-production.up.railway.app/tools/call\" -H \"Content-Type: application/json\" -d '{\"\"tool\"\":\"\"search_content\"\",\"\"args\"\":{\"\"query\"\":\"\"salt\"\",\"\"limit\"\":3}}')",
+      "Bash(curl -s \"https://accidental-recipes-production.up.railway.app/health\")",
+      "mcp__biga__get_ingredient",
+      "Bash(node --input-type=module -e ':*)",
+      "Bash(find \"C:\\\\Users\\\\tedfa\\\\OneDrive\\\\2 Find Marketing\\\\Biga\\\\Biga-MCP\" -name \"*.ts\" -exec grep -l \"main_ingredients\\\\|joinColumn\\\\|nameColumn\\\\|aliasColumn\" {} \\\\;)",
+      "mcp__biga__create_recipe",
+      "mcp__biga__update_recipe",
+      "Bash(node -e ':*)",
+      "Read(//tmp/**)",
+      "Read(//c/Users/tedfa/AppData/Local/Temp/**)"
     ]
   }
 }
