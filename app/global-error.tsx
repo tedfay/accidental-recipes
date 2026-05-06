@@ -3,6 +3,7 @@
 import * as Sentry from '@sentry/nextjs';
 import { Inter } from 'next/font/google';
 import { useEffect } from 'react';
+import { siteConfig } from '@/lib/site-config';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -22,6 +23,8 @@ export default function GlobalError({
     Sentry.captureException(error);
   }, [error]);
 
+  const errorReported = Boolean(siteConfig.sentry.dsn);
+
   return (
     <html lang="en" className={inter.variable}>
       <body className="bg-canvas text-ink font-body antialiased">
@@ -30,7 +33,8 @@ export default function GlobalError({
             Something went wrong
           </h1>
           <p className="mt-3 text-ink-secondary">
-            An unexpected error occurred. The error has been reported.
+            An unexpected error occurred.
+            {errorReported ? ' The error has been reported.' : ''}
           </p>
           <button
             type="button"

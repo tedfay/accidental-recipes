@@ -7,6 +7,7 @@ if (siteConfig.sentry.dsn) {
     tracesSampleRate: 0.1,
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 1.0,
+    integrations: [Sentry.replayIntegration()],
   });
 }
 
