@@ -23,7 +23,7 @@ export async function getRecipe(slug: string): Promise<{ content: { type: 'text'
   const rows = await sql`
     SELECT
       r.id, r.slug, r.meta->>'titleOverride' AS title, r.status, r.original_source,
-      r.headnote, r.ingredients, r.steps, r.meta, r.enrichment,
+      r.headnote, r.ingredients, r.steps, r.images, r.meta, r.enrichment,
       r.created_at, r.updated_at, r.derived_from_recipe_id,
       parent.slug AS derived_from_slug
     FROM recipes r

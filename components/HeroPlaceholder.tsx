@@ -1,22 +1,24 @@
 /**
  * Primary zone hero — compact header or responsive image.
  *
- * Hero images are not yet populated for any of the 56 recipes.
- * This is an intentional design state, not a bug.
+ * No image: compact gray box with title.
  *
- * No image (current state): compact gray box with title. No forced
- * aspect ratio — shrinks to content height.
+ * With image: responsive layout that adapts to image shape. On desktop,
+ * non-wide images sit right with title on the gray background left;
+ * mobile stacks the title box above the image.
  *
- * With image (future): responsive layout that adapts to image shape.
- * On desktop, non-wide images (square, portrait) sit right with title
- * on the gray background left. On mobile, title box stacks above image.
+ * Caller passes resolved imageSrc + alt — this component does not know
+ * about storage paths or the URL resolver. Alt is required when an
+ * image is present, optional when not. (2FI-215)
  */
 export default function HeroPlaceholder({
   title,
   imageSrc,
+  imageAlt,
 }: {
   title: string;
   imageSrc?: string | null;
+  imageAlt?: string | null;
 }) {
   if (imageSrc) {
     return (
@@ -31,7 +33,7 @@ export default function HeroPlaceholder({
           <div className="sm:flex-1">
             <img
               src={imageSrc}
-              alt=""
+              alt={imageAlt ?? ''}
               className="h-full w-full object-cover"
             />
           </div>
