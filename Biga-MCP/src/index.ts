@@ -362,8 +362,23 @@ if (PORT) {
       return;
     }
 
-    // MCP Streamable HTTP endpoint — full protocol for MCP-native clients
+    // MCP Streamable HTTP endpoint — full protocol for MCP-native clients.
+    // Treated as write-equivalent: exposes all tools including create_recipe,
+    // update_recipe, publish_recipe — so requires MCP_API_KEY_WRITE (2FI-241).
     if (req.url === '/mcp') {
+      const apiKey = req.headers['x-api-key'] as string | undefined;
+      const permission = validateApiKey(apiKey);
+      if (!permission) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Missing or invalid API key' }));
+        return;
+      }
+      if (permission !== 'write') {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: '/mcp requires write permission' }));
+        return;
+      }
+
       try {
         const server = createConfiguredServer();
         const transport = new StreamableHTTPServerTransport({
@@ -377,6 +392,11 @@ if (PORT) {
             chunks.push(chunk as Buffer);
           }
           const body = JSON.parse(Buffer.concat(chunks).toString());
+          if (body && typeof body === 'object' && body.method === 'tools/call') {
+            const toolName = body.params?.name ?? 'unknown';
+            const argsPreview = JSON.stringify(body.params?.arguments ?? {}).slice(0, 100);
+            console.log(`[/mcp] tool=${toolName} args=${argsPreview}`);
+          }
           await transport.handleRequest(req, res, body);
         } else if (req.method === 'GET' || req.method === 'DELETE') {
           await transport.handleRequest(req, res);

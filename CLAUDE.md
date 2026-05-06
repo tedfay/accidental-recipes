@@ -9,6 +9,28 @@ Last updated: 2026-04-10
 
 ---
 
+## Don't skip past blockers
+
+When a verification step, acceptance criterion, or deployment path can't
+be satisfied with what's available — don't propose a workaround that
+abandons the original goal. "Use curl instead of Claude Chat" is not
+equivalent to "Claude Chat works." If the real goal is Claude Chat
+connectivity and OAuth is missing, the answer is: name the gap, file a
+follow-up ticket, and tell the user the original goal is not yet met.
+
+This applies to:
+- Acceptance criteria where one path fails (e.g. "or" criteria — pick the
+  intended path, not the easy one)
+- Capability gaps in third-party services (auth, protocol versions, rate
+  limits) — investigate before assuming, then surface the gap explicitly
+- "It works locally" verifications that don't exercise the production path
+- Tests passing on a code path that isn't the one production uses
+
+The bar: never report a task as verified when the verification didn't
+test the path that matters. If unsure which path matters, ask.
+
+---
+
 ## What Biga Is
 
 > Headless moves content to surfaces. Biga makes content intelligent enough
@@ -105,6 +127,20 @@ Server components call `mcp-transport.ts` directly via `mcp-client.ts`.
 They do NOT self-fetch through the API route — Netlify serverless
 functions cannot reach `localhost`. The `/api/mcp` route exists solely
 as a proxy for browser-originated requests from client components.
+
+**Biga-MCP HTTP auth (2FI-205, 2FI-241).**
+Both authenticated endpoints require an `x-api-key` header.
+- `/tools/call` — per-tool permission map. Read tools accept either
+  `MCP_API_KEY_READ` or `MCP_API_KEY_WRITE`; write tools require
+  `MCP_API_KEY_WRITE`. The Next.js bridge uses this with the read key.
+- `/mcp` (Streamable HTTP, MCP-native clients like Claude Chat) — exposes
+  the full toolkit including writes, so requires `MCP_API_KEY_WRITE`.
+  Read-only MCP-native sessions are not supported on this path; route
+  read-only clients through `/tools/call` instead.
+- `/health` — no auth.
+
+Returns 401 when the key is missing or invalid; 403 when a valid key
+lacks the required permission level.
 
 **Key files:**
 - `lib/mcp-transport.ts` — transport selection (HTTP vs stdio)
