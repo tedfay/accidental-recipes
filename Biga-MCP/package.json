@@ -11,7 +11,8 @@
     "start": "node dist/index.js",
     "dev": "tsx --env-file=.env src/index.ts",
     "typecheck": "tsc --noEmit",
-    "check-build-fresh": "bash scripts/check-build-fresh.sh"
+    "check-build-fresh": "bash scripts/check-build-fresh.sh",
+    "smoke:215": "tsx --env-file=.env scripts/smoke-2fi-215.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
