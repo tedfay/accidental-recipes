@@ -16,6 +16,7 @@ import { getIngredientFrequencies } from './tools/get-ingredient-frequencies.js'
 import { createRecipe } from './tools/create-recipe.js';
 import { updateRecipe } from './tools/update-recipe.js';
 import { publishRecipe } from './tools/publish-recipe.js';
+import { updateRecipeImage } from './tools/update-recipe-image.js';
 const TOOL_PERMISSIONS = {
     health_check: 'read',
     get_recipe: 'read',
@@ -30,6 +31,8 @@ const TOOL_PERMISSIONS = {
     create_recipe: 'write',
     update_recipe: 'write',
     publish_recipe: 'write',
+    // Image tools (2FI-215)
+    update_recipe_image: 'write',
 };
 const WRITE_TOOLS = new Set(Object.entries(TOOL_PERMISSIONS)
     .filter(([, level]) => level === 'write')
@@ -158,6 +161,39 @@ function createConfiguredServer() {
     server.tool('publish_recipe', 'Change recipe status from draft to live. Separate tool to keep the publish action explicit.', {
         slug: z.string().describe('Slug of recipe to publish'),
     }, async ({ slug }) => publishRecipe(slug));
+    // ─── Image tools (2FI-215) ───────────────────────────────────────────────
+    const imageSourceSchema = z.object({
+        type: z.enum(['ai_generated', 'stock', 'original', 'imported']).describe('Image source type'),
+        model: z.string().optional().describe('AI model name, e.g. "flux-2-klein"'),
+        provider: z.string().optional().describe('Provider name, e.g. "Black Forest Labs"'),
+        prompt: z.string().optional().describe('Generation prompt used'),
+        generated_at: z.string().optional().describe('ISO 8601 timestamp of generation'),
+        generated_by: z.string().optional().describe('Tool that orchestrated generation'),
+        credit: z.string().optional().describe('Credit for stock/original images'),
+        license: z.string().optional().describe('License for stock/original images'),
+    });
+    const imageAttributionSchema = z.object({
+        text: z.string().describe('Attribution text for display'),
+        display: z.boolean().describe('Whether to render attribution on page'),
+    });
+    const embeddedMetadataSchema = z.object({
+        credit: z.string().describe('Credit field — written as EXIF Artist'),
+        source: z.string().describe('Source description — written as EXIF ImageDescription'),
+        copyright: z.string().describe('Copyright field — written as EXIF Copyright'),
+    });
+    server.tool('update_recipe_image', 'Download an image from a URL, optionally embed credit/copyright metadata (EXIF, JPEG only), upload to Supabase Storage, and merge the entry into the recipe images JSONB field. Stores storage_path; public URLs are composed at read time.', {
+        slug: z.string().describe('Recipe slug'),
+        role: z.string().describe('Image role, e.g. "hero"'),
+        url: z.string().url().describe('Source URL to download the image from'),
+        alt: z.string().max(125).optional().describe('Alt text (generated from recipe data if omitted)'),
+        width: z.number().int().positive().describe('Image width in pixels'),
+        height: z.number().int().positive().describe('Image height in pixels'),
+        mime_type: z.enum(['image/jpeg', 'image/png', 'image/webp']).describe('Image MIME type'),
+        source: imageSourceSchema,
+        attribution: imageAttributionSchema,
+        embedded_metadata: embeddedMetadataSchema.optional().describe('Embedded credit/copyright metadata (JPEG only — silently skipped for png/webp; surfaced via embedded_metadata_skipped flag on result)'),
+        force: z.boolean().optional().describe('Overwrite existing image at this path (default: false)'),
+    }, async (input) => updateRecipeImage(input));
     // ─── Resource template ──────────────────────────────────────────────────
     server.resource('recipe', new ResourceTemplate('recipes://{slug}', { list: undefined }), async (uri, { slug }) => {
         const result = await getRecipe(String(slug));
@@ -232,6 +268,7 @@ if (PORT) {
                     create_recipe: (a) => createRecipe(a),
                     update_recipe: (a) => updateRecipe(a),
                     publish_recipe: (a) => publishRecipe(a.slug),
+                    update_recipe_image: (a) => updateRecipeImage(a),
                 };
                 const handler = toolMap[tool];
                 if (!handler) {

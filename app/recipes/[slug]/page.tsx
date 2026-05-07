@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getRecipe, getSeoMetadata } from '@/lib/mcp-client';
 import { resolveTitle } from '@/lib/title';
+import { getImageEntry, resolveImageUrl } from '@/lib/image-url';
 import HeroPlaceholder from '@/components/HeroPlaceholder';
 import IngredientList from '@/components/IngredientList';
 import StepList from '@/components/StepList';
@@ -60,6 +61,11 @@ export default async function RecipePage({ params }: PageProps) {
 
   const title = resolveTitle(recipe, slug);
 
+  // Hero image: prefer recipes.images.hero (2FI-215), fall back to legacy meta.ogImage.
+  const heroEntry = getImageEntry(recipe.images, 'hero');
+  const heroSrc = heroEntry ? resolveImageUrl(heroEntry.storage_path) : (recipe.meta?.ogImage ?? null);
+  const heroAlt = heroEntry?.alt ?? null;
+
   return (
     <>
       {/* JSON-LD — injected verbatim, never modified */}
@@ -86,7 +92,7 @@ export default async function RecipePage({ params }: PageProps) {
 
       <article>
         {/* ── Primary zone ─────────────────────────────────────── */}
-        <HeroPlaceholder title={title} imageSrc={recipe.meta?.ogImage} />
+        <HeroPlaceholder title={title} imageSrc={heroSrc} imageAlt={heroAlt} />
 
         {recipe.headnote && (
           <p className="mt-6 text-ink-secondary leading-relaxed">

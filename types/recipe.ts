@@ -78,7 +78,55 @@ export interface Recipe {
   headnote: string | null;
   ingredients: IngredientLine[];
   steps: RecipeStep[];
+  /** Image entries keyed by role; null when no images uploaded yet (2FI-215) */
+  images: ImagesJsonb | null;
   meta: RecipeMeta;
   enrichment: RecipeEnrichment;
   created_at: string;
 }
+
+// ─── Images (2FI-215) ──────────────────────────────────────────────────────
+// Mirrors Biga-MCP/src/types/images.ts. Keep these in sync.
+
+export type ImageSourceType = 'ai_generated' | 'stock' | 'original' | 'imported';
+
+export interface ImageSource {
+  type: ImageSourceType;
+  model?: string;
+  provider?: string;
+  prompt?: string;
+  generated_at?: string;
+  generated_by?: string;
+  credit?: string;
+  license?: string;
+}
+
+export interface ImageAttribution {
+  text: string;
+  display: boolean;
+}
+
+export interface ImageEmbeddedMetadata {
+  credit: string;
+  source: string;
+  copyright: string;
+}
+
+export interface ImageEntry {
+  /** Path within the storage bucket — public URL composed at read time. */
+  storage_path: string;
+  filename: string;
+  alt: string;
+  width: number;
+  height: number;
+  mime_type: string;
+  sha256: string;
+  source: ImageSource;
+  attribution: ImageAttribution;
+  embedded_metadata?: ImageEmbeddedMetadata;
+  embedded_metadata_skipped?: boolean;
+  uploaded_at: string;
+}
+
+/** Keyed by role — "hero" today; "thumb" / "og" reserved for future use. */
+export type ImagesJsonb = Record<string, ImageEntry>;

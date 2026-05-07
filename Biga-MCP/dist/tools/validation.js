@@ -109,3 +109,41 @@ export function validateUpdateRecipe(input) {
         errors.push(...validateSteps(input.steps));
     return errors;
 }
+// ─── Image validation (2FI-215) ─────────────────────────────────────────────
+const VALID_SOURCE_TYPES = ['ai_generated', 'stock', 'original', 'imported'];
+const VALID_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_ALT_TEXT = 125;
+export function validateUpdateRecipeImage(input) {
+    const errors = [];
+    if (!input.slug) {
+        errors.push({ field: 'slug', message: 'Slug is required' });
+    }
+    else {
+        errors.push(...validateSlug(input.slug));
+    }
+    if (!input.role) {
+        errors.push({ field: 'role', message: 'Role is required (e.g. "hero")' });
+    }
+    if (!input.url) {
+        errors.push({ field: 'url', message: 'Image source URL is required' });
+    }
+    if (!input.width || input.width < 1) {
+        errors.push({ field: 'width', message: 'Width must be a positive number' });
+    }
+    if (!input.height || input.height < 1) {
+        errors.push({ field: 'height', message: 'Height must be a positive number' });
+    }
+    if (!VALID_MIME_TYPES.includes(input.mime_type)) {
+        errors.push({ field: 'mime_type', message: `Must be one of: ${VALID_MIME_TYPES.join(', ')}` });
+    }
+    if (!input.source?.type || !VALID_SOURCE_TYPES.includes(input.source.type)) {
+        errors.push({ field: 'source.type', message: `Must be one of: ${VALID_SOURCE_TYPES.join(', ')}` });
+    }
+    if (!input.attribution?.text) {
+        errors.push({ field: 'attribution.text', message: 'Attribution text is required' });
+    }
+    if (input.alt && input.alt.length > MAX_ALT_TEXT) {
+        errors.push({ field: 'alt', message: `Alt text must be ${MAX_ALT_TEXT} characters or fewer` });
+    }
+    return errors;
+}
