@@ -42,20 +42,10 @@ export interface RecipeMeta {
   author?: string | null;
 }
 
-/** Individual enrichment signal */
-export interface EnrichmentSignal {
-  type: string;
-  notes: string;
-  resolved: boolean;
-  triggeredAt: string;
-}
-
-/** Enrichment data on a recipe */
-export interface RecipeEnrichment {
-  signals: EnrichmentSignal[];
-  lastEnrichedAt: string;
-  enrichmentVersion: number;
-}
+// Enrichment types are platform-generic — canonical home is types/enrichment.ts.
+// Re-exported here so existing callers can keep importing from '@/types/recipe'.
+import type { ContentEnrichment } from './enrichment';
+export type { ContentEnrichment, EnrichmentSignal } from './enrichment';
 
 /** Search result from search_content MCP tool */
 export interface SearchResult {
@@ -81,7 +71,7 @@ export interface Recipe {
   /** Image entries keyed by role; null when no images uploaded yet (2FI-215) */
   images: ImagesJsonb | null;
   meta: RecipeMeta;
-  enrichment: RecipeEnrichment;
+  enrichment: ContentEnrichment | null;
   created_at: string;
 }
 

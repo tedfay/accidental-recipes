@@ -66,6 +66,9 @@ export default async function RecipePage({ params }: PageProps) {
   const heroSrc = heroEntry ? resolveImageUrl(heroEntry.storage_path) : (recipe.meta?.ogImage ?? null);
   const heroAlt = heroEntry?.alt ?? null;
 
+  const totalIngredients = recipe.ingredients.length;
+  const resolvedIngredients = recipe.ingredients.filter((i) => i.entity !== null).length;
+
   return (
     <>
       {/* JSON-LD — injected verbatim, never modified */}
@@ -108,7 +111,9 @@ export default async function RecipePage({ params }: PageProps) {
 
         {/* ── Signal zone ──────────────────────────────────────── */}
         <SignalZone
-          ingredients={recipe.ingredients}
+          resolved={resolvedIngredients}
+          total={totalIngredients}
+          entityLabel="ingredients"
           enrichment={recipe.enrichment}
         />
       </article>
