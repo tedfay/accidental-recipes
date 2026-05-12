@@ -17,3 +17,10 @@ next-env.d.ts
 
 # Claude Code per-session worktrees (branches still tracked via .git/worktrees/)
 .claude/worktrees/
+
+# Claude Code permission-approval cache. Previously tracked, then untracked
+# 2026-05-12 after the harness re-introduced dead-but-leaked credential
+# strings into the working tree on session events. The file persists on
+# disk and Claude Code still uses it; git just stops watching it. See
+# docs/secrets.md anti-pattern #1.
+.claude/settings.local.json
