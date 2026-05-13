@@ -540,15 +540,20 @@ set 3 env vars. No code changes needed.
 ---
 
 ## Related repos
+
+This repo (moved out of OneDrive 2026-05-13, see 2FI-265):
 ```
-C:\Users\tedfa\OneDrive\2 Find Marketing\
-├── Biga\
-│   ├── CLAUDE.md              ← root project context — read this too
-│   ├── Biga Technical\        ← ingestion pipeline — do not import from here
-│   └── Biga-MCP\              ← MCP server this frontend consumes
-└── Accidental Recipes\
-    └── Biga\                  ← this repo
-        ├── CLAUDE.md          ← this file
-        ├── app\               ← Next.js App Router
-        └── ...
+C:\dev\biga\                   ← this repo
+├── CLAUDE.md                  ← this file
+├── app\                       ← Next.js App Router
+├── Biga-MCP\                  ← production MCP server (deployed to Railway from this dir)
+└── ...
+```
+
+Related (still in OneDrive — design docs and legacy standalone MCP copy; consolidation tracked in 2FI-193):
+```
+C:\Users\tedfa\OneDrive\2 Find Marketing\Biga\
+├── CLAUDE.md                  ← root project context — read this too
+├── Biga Technical\            ← ingestion pipeline — do not import from here
+└── Biga-MCP\                  ← legacy standalone MCP copy (diverged; not the deployed one)
 ```
