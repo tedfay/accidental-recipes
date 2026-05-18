@@ -191,20 +191,10 @@ validated against P31 (instance of) or P279 (subclass of) before
 acceptance. Do not write the top result blindly. If validation fails,
 write null rather than a wrong entity.
 
-**Biga-MCP `src/` and `dist/` must stay in sync.**
-Production (Railway) ships from `Biga-MCP/dist/` because the MCP server
-lives inside this repo (no separate publish step). The compiled `dist/`
-is the deployed truth. **Never edit `dist/` files directly.** Edit `src/`,
-run `npm run build` from `Biga-MCP/`, and commit both in the same commit.
-A pre-commit hook at `.githooks/pre-commit` enforces this — it
-auto-installs via the root `package.json` `prepare` script when you run
-`npm install` (sets `core.hooksPath`). The Netlify build also runs the
-freshness check as defense-in-depth. If you see "dist/ is stale" —
-run `npm run build` from `Biga-MCP/`. Past divergence incidents
-(2026-04 IndexNow hooks added only to `dist/`; `updated_at` added to
-`dist/tools/search-content.js` only) silently regressed when later
-rebuilds dropped the unmirrored changes. Both the hook and the Netlify
-check go away when 2FI-239 lands (Railway builds from source).
+**Biga-MCP lives in its own repo.**
+The MCP server is `tedfay/biga-mcp` at `C:\dev\biga-mcp\`. This frontend
+repo is a pure consumer — it calls Railway over HTTP. Never edit MCP source
+here. Railway auto-deploys `main` of `tedfay/biga-mcp` (2FI-193, 2026-05-18).
 
 **JSONB insertion pattern — `sql.json()` only.**
 Always use `sql.json(value)` for JSONB columns in postgres.js tagged
@@ -541,19 +531,26 @@ set 3 env vars. No code changes needed.
 
 ## Related repos
 
-This repo (moved out of OneDrive 2026-05-13, see 2FI-265):
+This repo (Next.js frontend):
 ```
 C:\dev\biga\                   ← this repo
 ├── CLAUDE.md                  ← this file
 ├── app\                       ← Next.js App Router
-├── Biga-MCP\                  ← production MCP server (deployed to Railway from this dir)
 └── ...
 ```
 
-Related (still in OneDrive — design docs and legacy standalone MCP copy; consolidation tracked in 2FI-193):
+Biga-MCP server (canonical, separate repo — 2FI-193, 2026-05-18):
+```
+C:\dev\biga-mcp\               ← tedfay/biga-mcp
+├── CLAUDE.md                  ← MCP server context
+├── src\                       ← TypeScript source
+└── dist\                      ← compiled output (gitignored; build locally with npm run build)
+```
+Railway auto-deploys `main` → https://accidental-recipes-production.up.railway.app
+
+Related (design docs and ingestion pipeline — still in OneDrive):
 ```
 C:\Users\tedfa\OneDrive\2 Find Marketing\Biga\
 ├── CLAUDE.md                  ← root project context — read this too
-├── Biga Technical\            ← ingestion pipeline — do not import from here
-└── Biga-MCP\                  ← legacy standalone MCP copy (diverged; not the deployed one)
+└── Biga Technical\            ← ingestion pipeline — do not import from here
 ```
