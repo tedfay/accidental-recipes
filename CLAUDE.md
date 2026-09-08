@@ -1,6 +1,6 @@
 # Accidental Recipes — Frontend CLAUDE.md
 
-Last updated: 2026-04-10
+Last updated: 2026-09-08
 
 > Read this file completely before writing any code, creating any files,
 > or running any commands. These are constraints, not suggestions.
@@ -46,9 +46,14 @@ is right.
 ## What this repo is
 
 Next.js frontend for accidentalrecipes.com. Replaces the existing Blogger site.
-Deployed to Netlify. Part of the Biga platform — a content intelligence
-infrastructure project where content is a typed, enriched data object,
-not an HTML document.
+Deployed to Netlify. The reference implementation for Biga — a demonstration
+and open pattern (not a product; see `Biga-Design-Document-v3.0.docx`) where
+content is a typed, enriched data object, not an HTML document.
+
+`middleware.ts` handles `www→apex` canonicalization + Blogger `?m=1`/`?m=0`
+query-strip (added Sept 2026 — a redirect rule can't strip a query param
+without looping). Build command is just `npm run build` (the old embedded
+`Biga-MCP/` check was removed in 2FI-193).
 
 This site is the reference implementation of that thesis. It should be
 visually and architecturally distinct from a standard recipe site. The
