@@ -21,6 +21,20 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.sentry.io; img-src 'self' data: https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src 'none'"
 
+# ── Strip Blogger mobile query param (?m=1 / ?m=0) ───────────────
+# Blogger served every URL at ?m=1 (mobile) and ?m=0 (desktop); Google
+# still has thousands of those indexed. Netlify preserves the query
+# string across the Blogger redirects below, producing working
+# duplicates like /recipes/<slug>?m=1. This rule 301s any ?m= URL to
+# its clean equivalent site-wide. Must precede the Blogger block so the
+# rewritten second hop (/recipes/<slug>?m=1) is also caught.
+[[redirects]]
+  from = "/*"
+  query = { m = ":m" }
+  to = "/:splat"
+  status = 301
+  force = true
+
 # ── Blogger → Next.js redirects (2FI-179) ────────────────────────
 # 55 URLs from the Blogger sitemap (2009–2022).
 # All 301 permanent redirects with force=true.
