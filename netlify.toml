@@ -18,6 +18,30 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.sentry.io; img-src 'self' data: https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src 'none'"
 
+# ── Canonical host: www + http → https apex, one hop ─────────────
+# Netlify's automatic HTTPS upgrade fires before the default www→apex
+# redirect, so http://www.<domain>/x takes two hops. These explicit
+# scheme+host rules collapse every www / http variant to the canonical
+# https://accidentalrecipes.com/<path> in a single 301. Must be the
+# first redirects so host normalization happens before path rules.
+[[redirects]]
+  from = "https://www.accidentalrecipes.com/*"
+  to = "https://accidentalrecipes.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.accidentalrecipes.com/*"
+  to = "https://accidentalrecipes.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://accidentalrecipes.com/*"
+  to = "https://accidentalrecipes.com/:splat"
+  status = 301
+  force = true
+
 # ── Strip Blogger mobile query param (?m=1 / ?m=0) ───────────────
 # Blogger served every URL at ?m=1 (mobile) and ?m=0 (desktop); Google
 # still has thousands of those indexed. Netlify preserves the query
@@ -371,3 +395,26 @@
   to = "/recipes/vietnamese-fish-tacos"
   status = 301
   force = true
+
+# ── Blogger date-archive pages → recipe index ────────────────────
+# Blogger generated browsable archives at /YYYY/ and /YYYY/MM/. Those
+# 404 now; the new homepage is the full recipe index, which is the
+# direct equivalent. Catch-all AFTER the 56 specific post rules above
+# so known posts still resolve to /recipes/<slug>. No real route on
+# this domain begins with /20, and force is omitted so any future
+# top-level /20* page would still win over this redirect.
+[[redirects]]
+  from = "/20*"
+  to = "/"
+  status = 301
+
+# ── Malformed legacy URLs Google still probes ───────────────────
+[[redirects]]
+  from = "/&"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/$"
+  to = "/"
+  status = 301
