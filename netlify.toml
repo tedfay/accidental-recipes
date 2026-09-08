@@ -18,43 +18,12 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.sentry.io; img-src 'self' data: https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src 'none'"
 
-# ── Canonical host: www + http → https apex, one hop ─────────────
-# Netlify's automatic HTTPS upgrade fires before the default www→apex
-# redirect, so http://www.<domain>/x takes two hops. These explicit
-# scheme+host rules collapse every www / http variant to the canonical
-# https://accidentalrecipes.com/<path> in a single 301. Must be the
-# first redirects so host normalization happens before path rules.
-[[redirects]]
-  from = "https://www.accidentalrecipes.com/*"
-  to = "https://accidentalrecipes.com/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "http://www.accidentalrecipes.com/*"
-  to = "https://accidentalrecipes.com/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "http://accidentalrecipes.com/*"
-  to = "https://accidentalrecipes.com/:splat"
-  status = 301
-  force = true
-
-# ── Strip Blogger mobile query param (?m=1 / ?m=0) ───────────────
-# Blogger served every URL at ?m=1 (mobile) and ?m=0 (desktop); Google
-# still has thousands of those indexed. Netlify preserves the query
-# string across the Blogger redirects below, producing working
-# duplicates like /recipes/<slug>?m=1. This rule 301s any ?m= URL to
-# its clean equivalent site-wide. Must precede the Blogger block so the
-# rewritten second hop (/recipes/<slug>?m=1) is also caught.
-[[redirects]]
-  from = "/*"
-  query = { m = ":m" }
-  to = "/:splat"
-  status = 301
-  force = true
+# ── Host canonicalization + ?m= strip live in middleware.ts ──────
+# Netlify [[redirects]] and Next.js config redirects both re-append the
+# incoming query string to the destination, so a "strip ?m=" rule loops
+# forever. www→apex and ?m=1/?m=0 removal are handled together in
+# middleware.ts, which builds the target URL explicitly. http→https is
+# still Netlify's automatic upstream upgrade.
 
 # ── Blogger → Next.js redirects (2FI-179) ────────────────────────
 # 55 URLs from the Blogger sitemap (2009–2022).
