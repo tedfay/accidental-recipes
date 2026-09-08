@@ -1,12 +1,9 @@
 # ── Build ─────────────────────────────────────────────────────────
-# Pre-build defense: verify Biga-MCP/dist/ is in sync with src/ before
-# deploying the frontend. Reasoning: if MCP dist is stale, Railway is
-# running a broken/missing version of the backend, and we shouldn't
-# also deploy the frontend pointing at it. ~30s overhead from MCP
-# npm install + tsc rebuild for comparison. Obsoleted once Railway
-# builds Biga-MCP from source (2FI-239).
+# The frontend is a pure HTTP consumer of Biga-MCP (Railway). The old
+# embedded Biga-MCP/ copy and its src/dist freshness check were removed
+# in 2FI-193, so the build is just the Next.js build.
 [build]
-  command = "(cd Biga-MCP && npm install --no-audit --no-fund && npm run check-build-fresh) && npm run build"
+  command = "npm run build"
   publish = ".next"
 
 # ── Security response headers (2FI-167) ──────────────────────────
@@ -20,6 +17,13 @@
     Cross-Origin-Opener-Policy = "same-origin"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.sentry.io; img-src 'self' data: https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src 'none'"
+
+# ── Host canonicalization + ?m= strip live in middleware.ts ──────
+# Netlify [[redirects]] and Next.js config redirects both re-append the
+# incoming query string to the destination, so a "strip ?m=" rule loops
+# forever. www→apex and ?m=1/?m=0 removal are handled together in
+# middleware.ts, which builds the target URL explicitly. http→https is
+# still Netlify's automatic upstream upgrade.
 
 # ── Blogger → Next.js redirects (2FI-179) ────────────────────────
 # 55 URLs from the Blogger sitemap (2009–2022).
@@ -360,3 +364,26 @@
   to = "/recipes/vietnamese-fish-tacos"
   status = 301
   force = true
+
+# ── Blogger date-archive pages → recipe index ────────────────────
+# Blogger generated browsable archives at /YYYY/ and /YYYY/MM/. Those
+# 404 now; the new homepage is the full recipe index, which is the
+# direct equivalent. Catch-all AFTER the 56 specific post rules above
+# so known posts still resolve to /recipes/<slug>. No real route on
+# this domain begins with /20, and force is omitted so any future
+# top-level /20* page would still win over this redirect.
+[[redirects]]
+  from = "/20*"
+  to = "/"
+  status = 301
+
+# ── Malformed legacy URLs Google still probes ───────────────────
+[[redirects]]
+  from = "/&"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/$"
+  to = "/"
+  status = 301

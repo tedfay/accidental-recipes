@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { searchContent, listIngredients } from '@/lib/mcp-client';
+import { searchContent } from '@/lib/mcp-client';
 import { siteConfig } from '@/lib/site-config';
 
 /**
@@ -13,19 +13,12 @@ import { siteConfig } from '@/lib/site-config';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url;
 
-  const [rawRecipes, rawIngredients] = await Promise.all([
-    searchContent(undefined, undefined, undefined, 200).catch((err) => {
-      console.error('[sitemap] MCP searchContent failed:', err);
-      return [];
-    }),
-    listIngredients().catch((err) => {
-      console.error('[sitemap] MCP listIngredients failed:', err);
-      return [];
-    }),
-  ]);
+  const rawRecipes = await searchContent(undefined, undefined, undefined, 200).catch((err) => {
+    console.error('[sitemap] MCP searchContent failed:', err);
+    return [];
+  });
 
   const recipes = normalize(rawRecipes);
-  const ingredients = normalize(rawIngredients);
 
   // Derive lastModified for static pages from the most recent recipe timestamp
   const latestRecipeDate = recipes.reduce<string | null>((latest, r) => {
@@ -55,13 +48,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  for (const i of ingredients) {
-    if (i.wikidata_id) {
-      entries.push({
-        url: `${base}/ingredients/${i.wikidata_id}`,
-      });
-    }
-  }
+  // Individual /ingredients/[wikidataId] pages are noindex (thin, Q-number
+  // URLs) — omitted here so the sitemap lists only indexable canonicals.
+  // Re-add, gated on a content-quality bar, when 2FI-130 lands slugs.
 
   return entries;
 }

@@ -29,6 +29,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: displayName,
       description: `${displayName} — entity page with linked recipes and Wikidata context.`,
       alternates: { canonical: `/ingredients/${wikidataId}` },
+      // Q-number URLs carry no keyword signal and the pages are thin —
+      // keep them live and crawlable for in-site navigation, but out of
+      // the index. Revisit with readable slugs + richer content (2FI-130).
+      robots: { index: false, follow: true },
     };
   } catch {
     return {};
