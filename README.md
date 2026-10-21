@@ -132,7 +132,7 @@ cannot reach the production host):
 | Check | Result |
 |---|---|
 | Production pages | Verified by the maintainer |
-| Production `sitemap.xml` | **Not yet verified.** The prerendered sitemap passed in the cloud build, but the live `https://accidentalrecipes.com/sitemap.xml` has not been checked for recipe URLs. |
+| Production `sitemap.xml` | Verified by the maintainer on 2026-10-20: recipe URLs present. Total count not checked. |
 
 ## Deployment workflow
 
