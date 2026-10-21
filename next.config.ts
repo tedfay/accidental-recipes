@@ -19,5 +19,7 @@ export default withBundleAnalyzer(
     org: process.env['SENTRY_ORG'],
     project: process.env['SENTRY_PROJECT'],
     widenClientFileUpload: true,
+    /* Build-time plugin usage telemetry only; runtime error reporting is unaffected. */
+    telemetry: false,
   }),
 );
