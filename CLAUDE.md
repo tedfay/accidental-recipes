@@ -1,6 +1,6 @@
 # Accidental Recipes — Frontend CLAUDE.md
 
-Last updated: 2026-04-10
+Last updated: 2026-10-23
 
 > Read this file completely before writing any code, creating any files,
 > or running any commands. These are constraints, not suggestions.
@@ -140,7 +140,18 @@ Both authenticated endpoints require an `x-api-key` header.
 - `/health` — no auth.
 
 Returns 401 when the key is missing or invalid; 403 when a valid key
-lacks the required permission level.
+lacks the required permission level. On the live site a rejected key
+does not look like an error: recipe pages show "Page not found" and
+Railway logs nothing.
+
+**Credentials: read `docs/secrets.md` first.**
+It is the single inventory of every credential, every place it lives
+(Railway, Netlify, the Claude Code cloud environment, local files), how
+to rotate it, and how to verify it without printing it. Start any
+rotation, env var change, or credential audit there. Never build the
+list from memory, and never write a credential value into any file,
+ticket, or chat. Values live only in the password manager and the
+platforms that use them.
 
 **Key files:**
 - `lib/mcp-transport.ts` — transport selection (HTTP vs stdio)
@@ -495,8 +506,9 @@ until it is confirmed present in live MCP responses.
 - Submission library: `lib/indexnow.ts` — fire-and-forget, never throws
 - Webhook: `POST /api/indexnow` — accepts `{ slugs: string[] }`, auth via
   `Bearer INDEXNOW_SUBMIT_KEY` header
-- MCP hook: `Biga-MCP/src/hooks/notify-indexnow.ts` — call after
-  `publish_recipe` and `update_recipe` mutations
+- MCP hook: `src/hooks/notify-indexnow.ts` in `tedfay/biga-mcp` —
+  fires after `create_recipe`, `update_recipe`, `publish_recipe`, and
+  `update_recipe_image` on live recipes
 - Config in `lib/site-config.ts` under `indexNow` block
 
 **Env vars for IndexNow:**

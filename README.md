@@ -54,6 +54,8 @@ proxy**, not through an env var:
   for `accidental-recipes-production.up.railway.app`, scoped to the
   `/tools/call` path. The key value is held by the environment config and is
   never visible in the session. Use a read-level key here, never the write key.
+  When `MCP_API_KEY_READ` is rotated, update this network secret too (see
+  [`docs/secrets.md`](docs/secrets.md)); otherwise cloud sessions get 401s.
 - **Env vars set in the environment:** `MCP_SERVER_URL` (Railway origin with
   `/mcp` suffix). `MCP_TOOL_TIMEOUT` and `MCP_CONNECTION_NONBLOCKING` are also
   set; the app code does not read them.
