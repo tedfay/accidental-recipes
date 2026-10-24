@@ -1,18 +1,11 @@
 import '@/lib/env';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { inter } from '@/lib/fonts';
 import SiteHeader from '@/components/SiteHeader';
 import GoogleTagManager from '@/components/GoogleTagManager';
 import ConsentBanner from '@/components/ConsentBanner';
 import { siteConfig } from '@/lib/site-config';
 import './globals.css';
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  display: 'swap',
-  variable: '--font-inter',
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),

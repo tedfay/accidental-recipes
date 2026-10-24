@@ -7,7 +7,7 @@
   publish = ".next"
 
 # ── Security response headers (2FI-167) ──────────────────────────
-# CSP allows: Google Fonts (gstatic), GA4, GTM, Sentry.
+# CSP allows: GA4, GTM, Sentry. Fonts are self-hosted (font-src 'self').
 # Next.js App Router requires 'unsafe-inline' for both scripts and styles.
 [[headers]]
   for = "/*"

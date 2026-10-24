@@ -1,16 +1,9 @@
 'use client';
 
 import * as Sentry from '@sentry/nextjs';
-import { Inter } from 'next/font/google';
 import { useEffect } from 'react';
+import { inter } from '@/lib/fonts';
 import { siteConfig } from '@/lib/site-config';
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  display: 'swap',
-  variable: '--font-inter',
-});
 
 export default function GlobalError({
   error,

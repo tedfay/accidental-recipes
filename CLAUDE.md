@@ -1,6 +1,6 @@
 # Accidental Recipes — Frontend CLAUDE.md
 
-Last updated: 2026-10-23
+Last updated: 2026-10-24
 
 > Read this file completely before writing any code, creating any files,
 > or running any commands. These are constraints, not suggestions.
@@ -63,6 +63,9 @@ for the first time should be: "what is this — this is interesting."
 - Inter (400, 500, 600) + system-ui fallback — used throughout
 - `font-display` and `font-body` Tailwind classes both resolve to Inter
 - Playfair Display was evaluated and dropped — Inter throughout is the decision
+- Self-hosted via `next/font/local` in `lib/fonts.ts` (file + OFL license in
+  `app/fonts/`). Do not switch back to `next/font/google`: it fetches from
+  Google Fonts at build time and broke production builds (vercel/next.js#99114)
 
 **Color tokens** (CSS vars in `:root`, swap automatically for dark mode):
 - `canvas` / `canvas-raised` — page and surface backgrounds
