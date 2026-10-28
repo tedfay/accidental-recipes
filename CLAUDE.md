@@ -4,8 +4,8 @@ Last updated: 2026-10-28
 
 > Read this file completely before writing any code, creating any files,
 > or running any commands. These are constraints, not suggestions.
-> Also read the root Biga CLAUDE.md at:
-> `C:\Users\tedfa\OneDrive\2 Find Marketing\Biga\CLAUDE.md`
+> Also read the cross-repo Biga CLAUDE.md in `tedfay/biga-docs`
+> (attach that repo to the session when you need it).
 
 ---
 
@@ -565,9 +565,8 @@ Railway auto-deploys `main` to project `adequate-renewal`, service `accidental-r
 → https://mcp.accidentalrecipes.com (the old `accidental-recipes-production.up.railway.app`
 host still answers but nothing uses it; 2FI-659)
 
-Related (design docs and ingestion pipeline — still in OneDrive):
-```
-C:\Users\tedfa\OneDrive\2 Find Marketing\Biga\
-├── CLAUDE.md                  ← root project context — read this too
-└── Biga Technical\            ← ingestion pipeline — do not import from here
-```
+Related repos (the OneDrive `Biga` folder was removed 2026-10-28):
+- `tedfay/biga-docs` — design docs and the cross-repo CLAUDE.md (read this too)
+- `tedfay/biga-ingest` — ingestion pipeline (was `biga-technical`) — do not import from it
+- The original Blogger export lives in OneDrive at
+  `2 Find Marketing/Accidental Recipes/Blogger Takeout` (source data, not in any repo)

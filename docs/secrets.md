@@ -36,7 +36,7 @@ a credential belongs to is half the rotation procedure.
 **Planned or occasional locations:**
 
 - **"Biga content" cloud environment** (2FI-641, not created yet): write key as a network secret, for iPad content loads.
-- **Biga Technical pipeline** (`tedfay/biga-technical`): needs `DATABASE_URL` and `ANTHROPIC_API_KEY` in a local `.env` only while you run it. Keep that `.env` in a clone outside OneDrive, and delete or blank it when done.
+- **Ingestion pipeline** (`tedfay/biga-ingest`, formerly `biga-technical`): needs `DATABASE_URL` and `ANTHROPIC_API_KEY` in a local `.env` only while you run it. Keep that `.env` in a clone outside OneDrive, and delete or blank it when done.
 - **`claude mcp add` entries** (`biga-web`): any machine where the write key was added to Claude Code with `--header`. Check with `claude mcp list`.
 
 **Retired locations (should hold nothing):**
