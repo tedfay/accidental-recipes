@@ -36,7 +36,7 @@ Names only. Values live in the platform dashboards; see
 
 | Variable | Purpose |
 |---|---|
-| `MCP_SERVER_URL` | Railway origin |
+| `MCP_SERVER_URL` | MCP server origin, `https://mcp.accidentalrecipes.com` (Railway service `accidental-recipes-mcp`) |
 | `MCP_API_KEY_READ` | Read key for `/tools/call`. Must match Railway. Never set the write key here. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical URL (defaults to accidentalrecipes.com) |
 | `NEXT_PUBLIC_SENTRY_DSN` | Runtime error reporting. Unset = Sentry disabled. |
@@ -45,19 +45,26 @@ Names only. Values live in the platform dashboards; see
 | `NEXT_PUBLIC_SUPABASE_URL` | Composes public image URLs |
 | `INDEXNOW_API_KEY`, `INDEXNOW_SUBMIT_KEY` | IndexNow submission and webhook auth |
 
-### Claude Code cloud sessions (verified 2026-10-21)
+### Claude Code cloud sessions (verified 2026-10-28)
 
-The cloud environment authenticates to Railway through its **network
-proxy**, not through an env var:
+The **Biga frontend** cloud environment authenticates to the MCP server
+through its **network proxy**, not through an env var:
 
-- **Network secret:** the environment's proxy injects the `x-api-key` header
-  for `accidental-recipes-production.up.railway.app`, scoped to the
-  `/tools/call` path. The key value is held by the environment config and is
-  never visible in the session. Use a read-level key here, never the write key.
-  When `MCP_API_KEY_READ` is rotated, update this network secret too (see
+- **Network secrets:** one per host. Each makes the proxy inject the
+  `x-api-key` header, scoped to the `/tools/call` path:
+  `mcp.accidentalrecipes.com` (in use) and
+  `accidental-recipes-production.up.railway.app` (old Railway host, unused
+  since 2026-10-28, due for removal under 2FI-659). Because of the path
+  scope, the proxy returns 403 for other paths on these hosts, `/health`
+  included; that 403 comes from the proxy, not the server. The key value is
+  held by the environment config and is never visible in the session. Use a
+  read-level key here, never the write key. When `MCP_API_KEY_READ` is
+  rotated, update these network secrets too (see
   [`docs/secrets.md`](docs/secrets.md)); otherwise cloud sessions get 401s.
-- **Env vars set in the environment:** `MCP_SERVER_URL` (Railway origin with
-  `/mcp` suffix). `MCP_TOOL_TIMEOUT` and `MCP_CONNECTION_NONBLOCKING` are also
+  Secrets can't be edited in place: delete and re-add, and re-check the
+  path spelling (a `/toos/call` typo cost a round on 2026-10-28).
+- **Env vars set in the environment:** `MCP_SERVER_URL`
+  (`https://mcp.accidentalrecipes.com/mcp`). `MCP_TOOL_TIMEOUT` and `MCP_CONNECTION_NONBLOCKING` are also
   set; the app code does not read them.
 - **`MCP_API_KEY_READ` is intentionally not set.** As a result, `lib/env.ts`
   logs `[env] MCP_API_KEY_READ is not set … will be rejected (401)` during
