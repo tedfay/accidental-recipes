@@ -15,7 +15,7 @@ this file and replace the other copy with a link.
 locations, and procedures. If you find yourself about to paste a real
 key, stop.
 
-**Last updated:** 2026-10-28 (Mac mini scanned, 2FI-642; MCP host move and OneDrive cleanup, 2FI-659; write-key cloud environment approved, not yet created, 2FI-641)
+**Last updated:** 2026-10-28 (Mac mini scanned, 2FI-642; MCP host move and OneDrive cleanup, 2FI-659; "Biga content" write-key cloud environment created and verified, 2FI-641)
 
 ---
 
@@ -30,12 +30,13 @@ a credential belongs to is half the rotation procedure.
 | **Railway** | Production MCP server env vars. Project `adequate-renewal`, environment `production`, service `accidental-recipes-mcp` (renamed from `accidental-recipes` 2026-10-28, Railway dashboard). | Railway dashboard → service → Variables → save → **Deploy** on the staged-changes banner. |
 | **Netlify** | Production frontend env vars | Netlify dashboard → site → Environment variables. Then Deploys → Trigger deploy → **Clear cache and deploy site**. Env var changes do not redeploy on their own. |
 | **Claude Code cloud dev environment** | "Biga frontend" environment. The proxy injects `x-api-key` on `/tools/call`, one network secret, for `mcp.accidentalrecipes.com` (the old Railway host's secret was removed 2026-10-28, 2FI-659). No env var. See README "Claude Code cloud sessions". | Environment settings (needs a browser; the iPad app can't edit credentials). |
+| **"Biga content" cloud environment** | Authoring environment (2FI-641), created 2026-10-28. The proxy injects `x-api-key` with the **write** key on `/tools/call` only, one network secret, for `mcp.accidentalrecipes.com`. No env var. Used only for authoring, never for coding. Verified 2026-10-28: `create_recipe` made a draft and `get_recipe` read it back. | Environment settings (needs a browser). |
 | **Local frontend** | `C:\dev\biga\.env.local` | Edit the file. Restart `npm run dev`. |
 | **The repo itself** | `public/{INDEXNOW_API_KEY}.txt` is a file, not an env var; the file's *name* must equal the key value | Commit and deploy. |
 
 **Planned or occasional locations:**
 
-- **"Biga content" cloud environment** (2FI-641, proposed name; confirm when created): **approved, not created yet** (decision reversed 2026-10-28, recorded in 2FI-626). Will hold one network secret: the write key as `X-Api-Key` to `mcp.accidentalrecipes.com`, path `/tools/call` only. Used only for authoring, never for coding. Add it to the locations table above when it exists. OAuth on `/mcp` (2FI-250) is parked, not abandoned.
+- **OAuth on `/mcp`** (2FI-250): parked, not abandoned. The "Biga content" environment (table above) covers authoring until then.
 - **Ingestion pipeline** (`tedfay/biga-ingest`, formerly `biga-technical`): needs `DATABASE_URL` and `ANTHROPIC_API_KEY` in a local `.env` only while you run it. Keep that `.env` in a clone outside OneDrive, and delete or blank it when done.
 - **`claude mcp add` entries** (`biga-web`): any machine where the write key was added to Claude Code with `--header`. Check with `claude mcp list`.
 
@@ -60,7 +61,7 @@ a credential belongs to is half the rotation procedure.
 | `DATABASE_URL` | Supabase Postgres Session pooler URL with embedded password | ✓ | — | — | — | Biga Technical while running |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase secret key (`sb_secret_…`) for Storage uploads. The name is historical; it is no longer a JWT. | ✓ | — | — | — | — |
 | `MCP_API_KEY_READ` | Auth for read tools on `/tools/call` | ✓ | ✓ | ✓ (network secret) | ✓ | — |
-| `MCP_API_KEY_WRITE` | Auth for write tools on `/tools/call` and the full `/mcp` endpoint | ✓ | — | — | — | `biga-web` CLI entries (none found on the Mac mini; PC unchecked) |
+| `MCP_API_KEY_WRITE` | Auth for write tools on `/tools/call` and the full `/mcp` endpoint | ✓ | — | — | — | "Biga content" cloud env (network secret, `/tools/call` only); `biga-web` CLI entries (none found on the Mac mini; PC unchecked) |
 | `INDEXNOW_SUBMIT_KEY` | Shared secret: Railway hook → Netlify `/api/indexnow` | ✓ | ✓ | — | — | — |
 | `SENTRY_AUTH_TOKEN` | Source-map upload at Netlify build time | — | ✓ | — | — | — |
 | `ANTHROPIC_API_KEY` | Claude API, used by the Biga Technical parser | — | — | — | — | Biga Technical while running |
@@ -97,7 +98,7 @@ The blast radius if a credential leaks depends on what reads it.
 | `DATABASE_URL` | biga-mcp `src/db.ts`; Biga Technical scripts | Full read + write to all recipes, ingredients, all tables |
 | `SUPABASE_SERVICE_ROLE_KEY` | biga-mcp `src/storage-client.ts` (via `update_recipe_image`) | Bypasses row-level security; full Supabase REST + Storage admin |
 | `MCP_API_KEY_READ` | `lib/mcp-transport.ts` (frontend) sends; biga-mcp `src/index.ts` validates | Read all recipes via Railway — but the site is public anyway, so realistically: rate-limit abuse |
-| `MCP_API_KEY_WRITE` | biga-mcp `src/index.ts` validates; sent by MCP clients and manual `curl` | Create, update, publish, modify any recipe |
+| `MCP_API_KEY_WRITE` | biga-mcp `src/index.ts` validates; sent by the "Biga content" cloud environment proxy, MCP clients, and manual `curl` | Create, update, publish, modify any recipe |
 | `INDEXNOW_SUBMIT_KEY` | `app/api/indexnow/route.ts` validates; biga-mcp `src/hooks/notify-indexnow.ts` sends | Trigger unwanted IndexNow submissions for our own URLs (low impact) |
 | `SENTRY_AUTH_TOKEN` | Sentry build plugin in `next.config.ts` | Upload arbitrary source maps to your Sentry project |
 | `ANTHROPIC_API_KEY` | Biga Technical `src/services/parser.ts`, `src/scripts/execute-import.ts` | Spend on our Anthropic account |
@@ -117,6 +118,7 @@ Failures here are quiet. Know the symptoms before you rotate.
 | `INDEXNOW_SUBMIT_KEY` mismatched | Publishes still succeed. Railway deploy logs show `[notify-indexnow] 401 from …`. Nothing reaches IndexNow. |
 | `MCP_API_KEY_*` wrong in a `curl` test | `{"error":"Missing or invalid API key"}`, HTTP 401. |
 | Cloud dev environment read key stale | Tool calls from cloud sessions return 401. |
+| "Biga content" write key stale or missing | Write tools return HTTP 401. If the secret holds the read key instead, they return 403 `Tool "create_recipe" requires write permission`. |
 
 ---
 
@@ -173,8 +175,9 @@ dev environment's network secret (`mcp.accidentalrecipes.com`), and `.env.local`
 Netlify. See "Order and downtime."
 
 **`MCP_API_KEY_WRITE`** — Generate, update Railway, deploy. Then update any
-`biga-web` entry (`claude mcp list`) and the "Biga content" environment if
-it exists. Never set it on Netlify or in the cloud dev environment.
+`biga-web` entry (`claude mcp list`) and the "Biga content" environment's
+network secret (delete and re-add; check the path is `/tools/call`). Never
+set it on Netlify or in the cloud dev environment.
 
 **`INDEXNOW_SUBMIT_KEY`** — Generate one value and set the **same** value
 on Netlify and Railway (the route compares it exactly). Redeploy both.
@@ -243,8 +246,9 @@ Test whether a credential **works**. Never print, echo, or measure it.
   Three places, one value.
 - `MCP_API_KEY_READ` on Netlify, in the cloud dev environment, and in
   `.env.local` MUST equal the value on Railway.
-- `MCP_API_KEY_WRITE` on Railway MUST equal whatever any MCP client is
-  configured to send.
+- `MCP_API_KEY_WRITE` on Railway MUST equal the "Biga content" cloud
+  environment's network secret and whatever any MCP client is configured
+  to send.
 - `INDEXNOW_SUBMIT_KEY` on Netlify MUST equal the same on Railway. Netlify
   stores per-context values; check that every context (including "dev")
   matches or is empty.
