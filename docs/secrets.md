@@ -15,7 +15,7 @@ this file and replace the other copy with a link.
 locations, and procedures. If you find yourself about to paste a real
 key, stop.
 
-**Last updated:** 2026-10-28 (Mac mini scanned, 2FI-642; MCP host and Railway service renamed, 2FI-659)
+**Last updated:** 2026-10-28 (Mac mini scanned, 2FI-642; MCP host move and OneDrive cleanup, 2FI-659; write-key cloud environment deferred, 2FI-641)
 
 ---
 
@@ -35,7 +35,7 @@ a credential belongs to is half the rotation procedure.
 
 **Planned or occasional locations:**
 
-- **"Biga content" cloud environment** (2FI-641, not created yet): write key as a network secret, for iPad content loads.
+- **"Biga content" cloud environment** (2FI-641): **not created, by decision** (2026-10-28). Authoring from cloud sessions waits for OAuth on `/mcp` (2FI-250) rather than putting the write key in a cloud environment.
 - **Ingestion pipeline** (`tedfay/biga-ingest`, formerly `biga-technical`): needs `DATABASE_URL` and `ANTHROPIC_API_KEY` in a local `.env` only while you run it. Keep that `.env` in a clone outside OneDrive, and delete or blank it when done.
 - **`claude mcp add` entries** (`biga-web`): any machine where the write key was added to Claude Code with `--header`. Check with `claude mcp list`.
 
@@ -46,6 +46,7 @@ a credential belongs to is half the rotation procedure.
 | `C:\dev\biga\Biga-MCP\.env` | Deleted 2026-10-23. The folder is a leftover from before the biga-mcp repo split (2FI-193). |
 | `OneDrive\2 Find Marketing\Biga\Biga Technical\.env` | Deleted 2026-10-23 and purged from OneDrive's recycle bin. A secrets file in a synced folder is a copy we don't need. |
 | Claude Desktop config (`claude_desktop_config.json`, Windows) | Still holds a stale `DATABASE_URL`. Local Biga is broken and being retired (2FI-656, 2FI-256, 2FI-257). Delete the `biga` entry; don't update it. |
+| OneDrive `2 Find Marketing/Biga` folder (incl. the `Biga Technical` checkout) | Deleted 2026-10-28 (2FI-659). Its `probe-url-from-pw.mjs` held a Postgres URL with the pre-2026-10-23 password (dead since the 2FI-642 reset). Content lives in `tedfay/biga-docs` and `tedfay/biga-ingest`; the deletion sits in the 2findmarketing account's OneDrive recycle bin for 30 days. |
 | Mac mini | Scanned 2026-10-28, nothing kept (2FI-642). No `.env` files (home, iCloud Drive, synced OneDrive), no Claude Code CLI, no Biga entry in the Claude Desktop config. `biga claude key.txt` (synced from OneDrive `Biga Technical`) deleted and purged; no matching key existed in the Anthropic Console. |
 
 ---
@@ -59,7 +60,7 @@ a credential belongs to is half the rotation procedure.
 | `DATABASE_URL` | Supabase Postgres Session pooler URL with embedded password | ✓ | — | — | — | Biga Technical while running |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase secret key (`sb_secret_…`) for Storage uploads. The name is historical; it is no longer a JWT. | ✓ | — | — | — | — |
 | `MCP_API_KEY_READ` | Auth for read tools on `/tools/call` | ✓ | ✓ | ✓ (network secret) | ✓ | — |
-| `MCP_API_KEY_WRITE` | Auth for write tools on `/tools/call` and the full `/mcp` endpoint | ✓ | — | — | — | `biga-web` CLI entries; planned "Biga content" env |
+| `MCP_API_KEY_WRITE` | Auth for write tools on `/tools/call` and the full `/mcp` endpoint | ✓ | — | — | — | `biga-web` CLI entries (none found on the Mac mini; PC unchecked) |
 | `INDEXNOW_SUBMIT_KEY` | Shared secret: Railway hook → Netlify `/api/indexnow` | ✓ | ✓ | — | — | — |
 | `SENTRY_AUTH_TOKEN` | Source-map upload at Netlify build time | — | ✓ | — | — | — |
 | `ANTHROPIC_API_KEY` | Claude API, used by the Biga Technical parser | — | — | — | — | Biga Technical while running |
@@ -291,6 +292,19 @@ Test whether a credential **works**. Never print, echo, or measure it.
    another place to rotate and another place to leak. Delete copies that
    nothing uses instead of updating them.
 
+7. **Editing a cloud network secret and not re-testing every host.** On
+   2026-10-23 the read-key secret was "verified" on the Railway host only;
+   `mcp.accidentalrecipes.com` returned 401 for days. On 2026-10-28 the
+   re-added secret was saved with the path `/toos/call`, which made the
+   proxy return 403. Secrets can't be edited in place: delete, re-add,
+   check the path spelling, then probe **each** host from a **fresh**
+   session started in that environment.
+
+8. **Purging in the wrong OneDrive account.** The browser defaulted to an
+   outlook.com account while the Mac syncs the 2findmarketing account, so
+   the first recycle-bin purge did nothing. Check the account email in both
+   places before purging (2FI-673).
+
 ---
 
 ## Rotation log
@@ -308,6 +322,8 @@ Test whether a credential **works**. Never print, echo, or measure it.
 - 2FI-253 — Credential management hardening (umbrella, May 7)
 - 2FI-641 — "Biga content" cloud environment with the write key
 - 2FI-656 — Retire local Biga
+- 2FI-659 — MCP host move to `mcp.accidentalrecipes.com`; cloud network secret per host
+- 2FI-670 / 2FI-671 / 2FI-672 / 2FI-673 — Mac mini follow-ups (backup codes, Screaming Frog key, stale OneDrive copy, OneDrive accounts)
 - 2FI-205 — Biga-MCP HTTP auth introduction (created the read/write key split)
 - 2FI-241 — Tightened the per-tool permission map on `/tools/call`
 - 2FI-100 — HTTP transport selection (introduced `MCP_SERVER_URL`)
