@@ -50,16 +50,15 @@ Names only. Values live in the platform dashboards; see
 The **Biga frontend** cloud environment authenticates to the MCP server
 through its **network proxy**, not through an env var:
 
-- **Network secrets:** one per host. Each makes the proxy inject the
-  `x-api-key` header, scoped to the `/tools/call` path:
-  `mcp.accidentalrecipes.com` (in use) and
-  `accidental-recipes-production.up.railway.app` (old Railway host, unused
-  since 2026-10-28, due for removal under 2FI-659). Because of the path
-  scope, the proxy returns 403 for other paths on these hosts, `/health`
-  included; that 403 comes from the proxy, not the server. The key value is
+- **Network secret:** one, for `mcp.accidentalrecipes.com`, scoped to the
+  `/tools/call` path. It makes the proxy inject the `x-api-key` header. The
+  old Railway host's secret was removed on 2026-10-28, so calls to
+  `accidental-recipes-production.up.railway.app` from cloud sessions get 401.
+  Because of the path scope, the proxy returns 403 for other paths on the
+  new host, `/health` included; that 403 comes from the proxy, not the server. The key value is
   held by the environment config and is never visible in the session. Use a
   read-level key here, never the write key. When `MCP_API_KEY_READ` is
-  rotated, update these network secrets too (see
+  rotated, update this network secret too (see
   [`docs/secrets.md`](docs/secrets.md)); otherwise cloud sessions get 401s.
   Secrets can't be edited in place: delete and re-add, and re-check the
   path spelling (a `/toos/call` typo cost a round on 2026-10-28).
