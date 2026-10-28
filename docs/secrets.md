@@ -15,7 +15,7 @@ this file and replace the other copy with a link.
 locations, and procedures. If you find yourself about to paste a real
 key, stop.
 
-**Last updated:** 2026-10-23 (after the Railway incident rotation, 2FI-642)
+**Last updated:** 2026-10-28 (Mac mini scanned, 2FI-642)
 
 ---
 
@@ -46,7 +46,7 @@ a credential belongs to is half the rotation procedure.
 | `C:\dev\biga\Biga-MCP\.env` | Deleted 2026-10-23. The folder is a leftover from before the biga-mcp repo split (2FI-193). |
 | `OneDrive\2 Find Marketing\Biga\Biga Technical\.env` | Deleted 2026-10-23 and purged from OneDrive's recycle bin. A secrets file in a synced folder is a copy we don't need. |
 | Claude Desktop config (`claude_desktop_config.json`, Windows) | Still holds a stale `DATABASE_URL`. Local Biga is broken and being retired (2FI-656, 2FI-256, 2FI-257). Delete the `biga` entry; don't update it. |
-| Mac mini | Not yet scanned (2FI-642). |
+| Mac mini | Scanned 2026-10-28, nothing kept (2FI-642). No `.env` files (home, iCloud Drive, synced OneDrive), no Claude Code CLI, no Biga entry in the Claude Desktop config. `biga claude key.txt` (synced from OneDrive `Biga Technical`) deleted and purged; no matching key existed in the Anthropic Console. |
 
 ---
 
