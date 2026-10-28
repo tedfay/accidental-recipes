@@ -31,6 +31,12 @@ test the path that matters. If unsure which path matters, ask.
 
 ---
 
+## Source Verification
+
+Before proposing architecture or implementation, follow the **Required source verification** gate in [`tedfay/biga-docs` CLAUDE.md](https://github.com/tedfay/biga-docs/blob/main/CLAUDE.md#required-source-verification). Key points for this repo: the MCP server (`tedfay/biga-mcp`) is the data source — inspect it before making claims about available tools or auth behavior; do not infer system-wide absence from this checkout alone; report what was actually verified.
+
+---
+
 ## What Biga Is
 
 > Headless moves content to surfaces. Biga makes content intelligent enough
