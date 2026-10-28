@@ -62,6 +62,10 @@ through its **network proxy**, not through an env var:
   [`docs/secrets.md`](docs/secrets.md)); otherwise cloud sessions get 401s.
   Secrets can't be edited in place: delete and re-add, and re-check the
   path spelling (a `/toos/call` typo cost a round on 2026-10-28).
+- **No write-key environment.** Cloud sessions can read content but not
+  create, edit or publish it. Decided 2026-10-28: authoring from the cloud
+  waits for OAuth on `/mcp` (2FI-250) instead of a write-key environment
+  (2FI-641).
 - **Env vars set in the environment:** `MCP_SERVER_URL`
   (`https://mcp.accidentalrecipes.com/mcp`). `MCP_TOOL_TIMEOUT` and `MCP_CONNECTION_NONBLOCKING` are also
   set; the app code does not read them.
