@@ -15,7 +15,7 @@ this file and replace the other copy with a link.
 locations, and procedures. If you find yourself about to paste a real
 key, stop.
 
-**Last updated:** 2026-10-23 (after the Railway incident rotation, 2FI-642)
+**Last updated:** 2026-10-28 (Mac mini scanned, 2FI-642; MCP host and Railway service renamed, 2FI-659)
 
 ---
 
@@ -27,9 +27,9 @@ a credential belongs to is half the rotation procedure.
 | Location | What it is | How to edit |
 |---|---|---|
 | **Password manager** | Where new values are stored first. The source for every copy below. | Save the new value here before putting it anywhere else. |
-| **Railway** | Production MCP server env vars. Project `adequate-renewal`, service `accidental-recipes`. | Railway dashboard → service → Variables → save → **Deploy** on the staged-changes banner. |
+| **Railway** | Production MCP server env vars. Project `adequate-renewal`, environment `production`, service `accidental-recipes-mcp` (renamed from `accidental-recipes` 2026-10-28, Railway dashboard). | Railway dashboard → service → Variables → save → **Deploy** on the staged-changes banner. |
 | **Netlify** | Production frontend env vars | Netlify dashboard → site → Environment variables. Then Deploys → Trigger deploy → **Clear cache and deploy site**. Env var changes do not redeploy on their own. |
-| **Claude Code cloud dev environment** | The proxy injects `x-api-key` for the Railway host on `/tools/call` (network secret). No env var. See README "Claude Code cloud sessions". | Environment settings (needs a browser; the iPad app can't edit credentials). |
+| **Claude Code cloud dev environment** | "Biga frontend" environment. The proxy injects `x-api-key` on `/tools/call`, one network secret, for `mcp.accidentalrecipes.com` (the old Railway host's secret was removed 2026-10-28, 2FI-659). No env var. See README "Claude Code cloud sessions". | Environment settings (needs a browser; the iPad app can't edit credentials). |
 | **Local frontend** | `C:\dev\biga\.env.local` | Edit the file. Restart `npm run dev`. |
 | **The repo itself** | `public/{INDEXNOW_API_KEY}.txt` is a file, not an env var; the file's *name* must equal the key value | Commit and deploy. |
 
@@ -46,7 +46,7 @@ a credential belongs to is half the rotation procedure.
 | `C:\dev\biga\Biga-MCP\.env` | Deleted 2026-10-23. The folder is a leftover from before the biga-mcp repo split (2FI-193). |
 | `OneDrive\2 Find Marketing\Biga\Biga Technical\.env` | Deleted 2026-10-23 and purged from OneDrive's recycle bin. A secrets file in a synced folder is a copy we don't need. |
 | Claude Desktop config (`claude_desktop_config.json`, Windows) | Still holds a stale `DATABASE_URL`. Local Biga is broken and being retired (2FI-656, 2FI-256, 2FI-257). Delete the `biga` entry; don't update it. |
-| Mac mini | Not yet scanned (2FI-642). |
+| Mac mini | Scanned 2026-10-28, nothing kept (2FI-642). No `.env` files (home, iCloud Drive, synced OneDrive), no Claude Code CLI, no Biga entry in the Claude Desktop config. `biga claude key.txt` (synced from OneDrive `Biga Technical`) deleted and purged; no matching key existed in the Anthropic Console. |
 
 ---
 
@@ -168,7 +168,7 @@ set it on Railway → deploy → verify an upload (below) → delete every other
 secret key. Railway is the only consumer.
 
 **`MCP_API_KEY_READ`** — Generate, then update Railway, Netlify, the cloud
-dev environment's network secret, and `.env.local`. Redeploy Railway and
+dev environment's network secret (`mcp.accidentalrecipes.com`), and `.env.local`. Redeploy Railway and
 Netlify. See "Order and downtime."
 
 **`MCP_API_KEY_WRITE`** — Generate, update Railway, deploy. Then update any
@@ -204,7 +204,7 @@ Test whether a credential **works**. Never print, echo, or measure it.
   true; grep '^MCP_API_KEY_READ=' /c/dev/biga/.env.local | tr -d '\r"' \
     | sed 's/^MCP_API_KEY_READ=/x-api-key: /' \
     | curl -sS -o /dev/null -w '%{http_code}\n' -H @- -H "Content-Type: application/json" \
-      -X POST https://accidental-recipes-production.up.railway.app/tools/call \
+      -X POST https://mcp.accidentalrecipes.com/tools/call \
       -d '{"tool":"search_content","args":{"limit":1}}'
   ```
   200 = current, 401 = stale.

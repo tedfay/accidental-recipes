@@ -1,6 +1,6 @@
 # Accidental Recipes — Frontend CLAUDE.md
 
-Last updated: 2026-10-24
+Last updated: 2026-10-28
 
 > Read this file completely before writing any code, creating any files,
 > or running any commands. These are constraints, not suggestions.
@@ -493,10 +493,10 @@ until it is confirmed present in live MCP responses.
 ## Sitemap and IndexNow
 
 **Sitemap** (`app/sitemap.ts`) — dynamic, MCP-driven, lastmod-only.
-- Uses `searchContent(limit: 200)` and `listIngredients()` for URL discovery
+- Uses `searchContent(limit: 200)` for URL discovery: recipes plus `/` and `/ingredients`
+- Individual `/ingredients/[wikidataId]` pages are omitted: they are noindex (thin, Q-number URLs) until 2FI-130 lands slugs
 - `lastmod` derived from `updated_at ?? created_at` on recipe entries
 - **No `changeFrequency` or `priority`** — Google ignores both entirely
-- Ingredient entries omit `lastmod` (no timestamps in current schema)
 - Static entries (`/`, `/ingredients`) use the most recent recipe timestamp
 - MCP failures are logged via `console.error` and degrade to static entries only
 
@@ -561,7 +561,9 @@ C:\dev\biga-mcp\               ← tedfay/biga-mcp
 ├── src\                       ← TypeScript source
 └── dist\                      ← compiled output (gitignored; build locally with npm run build)
 ```
-Railway auto-deploys `main` → https://accidental-recipes-production.up.railway.app
+Railway auto-deploys `main` to project `adequate-renewal`, service `accidental-recipes-mcp`
+→ https://mcp.accidentalrecipes.com (the old `accidental-recipes-production.up.railway.app`
+host still answers but nothing uses it; 2FI-659)
 
 Related (design docs and ingestion pipeline — still in OneDrive):
 ```
