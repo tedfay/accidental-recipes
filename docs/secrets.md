@@ -15,7 +15,7 @@ this file and replace the other copy with a link.
 locations, and procedures. If you find yourself about to paste a real
 key, stop.
 
-**Last updated:** 2026-10-28 (Mac mini scanned, 2FI-642; MCP host move and OneDrive cleanup, 2FI-659; write-key cloud environment deferred, 2FI-641)
+**Last updated:** 2026-10-28 (Mac mini scanned, 2FI-642; MCP host move and OneDrive cleanup, 2FI-659; write-key cloud environment approved, not yet created, 2FI-641)
 
 ---
 
@@ -35,7 +35,7 @@ a credential belongs to is half the rotation procedure.
 
 **Planned or occasional locations:**
 
-- **"Biga content" cloud environment** (2FI-641): **not created, by decision** (2026-10-28). Authoring from cloud sessions waits for OAuth on `/mcp` (2FI-250) rather than putting the write key in a cloud environment.
+- **"Biga content" cloud environment** (2FI-641, proposed name; confirm when created): **approved, not created yet** (decision reversed 2026-10-28, recorded in 2FI-626). Will hold one network secret: the write key as `X-Api-Key` to `mcp.accidentalrecipes.com`, path `/tools/call` only. Used only for authoring, never for coding. Add it to the locations table above when it exists. OAuth on `/mcp` (2FI-250) is parked, not abandoned.
 - **Ingestion pipeline** (`tedfay/biga-ingest`, formerly `biga-technical`): needs `DATABASE_URL` and `ANTHROPIC_API_KEY` in a local `.env` only while you run it. Keep that `.env` in a clone outside OneDrive, and delete or blank it when done.
 - **`claude mcp add` entries** (`biga-web`): any machine where the write key was added to Claude Code with `--header`. Check with `claude mcp list`.
 
@@ -272,8 +272,10 @@ Test whether a credential **works**. Never print, echo, or measure it.
    Prefer commands that read from env vars or pipe from files.
 
 2. **Setting `MCP_API_KEY_WRITE` on Netlify** or in the cloud dev
-   environment. Both only read. The write key there enlarges the blast
-   radius.
+   environment ("Biga frontend"). Both only read. The write key there
+   enlarges the blast radius. The one sanctioned write-key environment is
+   the dedicated authoring environment (2FI-641), with the limits listed
+   there: one secret, `/tools/call` only, no coding.
 
 3. **Direct Supabase host in `DATABASE_URL`.** Fails DNS on most home
    networks. Always use the Session pooler URL.
