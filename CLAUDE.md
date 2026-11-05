@@ -1,6 +1,6 @@
 # Accidental Recipes — Frontend CLAUDE.md
 
-Last updated: 2026-10-28
+Last updated: 2026-11-05
 
 > Read this file completely before writing any code, creating any files,
 > or running any commands. These are constraints, not suggestions.
@@ -254,9 +254,18 @@ Apply this chain consistently:
 | URL / route | `slug` — always, never derived from title |
 | `<title>` tag | titleOverride → title → slug humanized |
 | `<h1>` | title → titleOverride → slug humanized |
-| `<meta name="description">` | headnote — omit entirely if null |
+| `<meta name="description">` | headnote as plain text (Markdown stripped) — omit entirely if null |
 | JSON-LD `name` | titleOverride → title |
-| JSON-LD `description` | headnote — omit entirely if null |
+| JSON-LD `description` | headnote as plain text (Markdown stripped) — omit entirely if null |
+
+**Headnote is Markdown (decided 2026-11-05, 2FI-626; not built yet).**
+Prose fields are rendered as Markdown with raw HTML disabled. Internal
+links stay relative and open in the same tab; external links open in a
+new tab with `rel="noopener noreferrer"` and a visible and screen-reader
+indication, set by rule, never by the author. Images need alt text. No
+`class`, `id` or `style` from content. Full rule: biga-docs `CLAUDE.md` →
+"Decided 2026-11-05". Until this ships, the recipe page prints the
+headnote as plain text, so Markdown in a headnote shows up raw.
 
 ---
 
@@ -477,6 +486,7 @@ respects the user's intelligence.
 | Wikidata `sameAs` in JSON-LD | Missing pending 2FI-124 | Inject what `get_seo_metadata` returns |
 | Content relationships (isPartOf, isBasedOn etc.) | Not yet in data shape | Zone omitted entirely — do not construct from frontend |
 | prepTime / cookTime / totalTime | Not yet in data shape | Zone omitted entirely when null |
+| JSON-LD `datePublished` | Comes from `created_at`, not the go-live date, until `published_at` ships (decided 2026-11-05, 2FI-626) | Inject what `get_seo_metadata` returns; do not compute a date in the frontend |
 
 ---
 
