@@ -63,9 +63,9 @@ through its **network proxy**, not through an env var:
   Secrets can't be edited in place: delete and re-add, and re-check the
   path spelling (a `/toos/call` typo cost a round on 2026-10-28).
 - **No write key here.** Sessions in this environment can read content but
-  not create, edit or publish it. Authoring will use a separate write-key
-  environment (2FI-641, approved 2026-10-28, not created yet); this
-  environment stays read-only.
+  not create, edit or publish it. Authoring uses the separate **Biga
+  content** environment (2FI-641, created and verified 2026-10-28), which
+  holds the write key on `/tools/call`; this environment stays read-only.
 - **Env vars set in the environment:** `MCP_SERVER_URL`
   (`https://mcp.accidentalrecipes.com/mcp`). `MCP_TOOL_TIMEOUT` and `MCP_CONNECTION_NONBLOCKING` are also
   set; the app code does not read them.
