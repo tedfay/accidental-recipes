@@ -516,8 +516,9 @@ until it is confirmed present in live MCP responses.
 - Webhook: `POST /api/indexnow` — accepts `{ slugs: string[] }`, auth via
   `Bearer INDEXNOW_SUBMIT_KEY` header
 - MCP hook: `src/hooks/notify-indexnow.ts` in `tedfay/biga-mcp` —
-  fires after `create_recipe`, `update_recipe`, `publish_recipe`, and
-  `update_recipe_image` on live recipes
+  fires after `update_recipe`, `publish_recipe`, and
+  `update_recipe_image` on live recipes. `create_recipe` does not fire it:
+  new recipes are always drafts
 - Config in `lib/site-config.ts` under `indexNow` block
 
 **Env vars for IndexNow:**

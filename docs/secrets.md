@@ -97,8 +97,8 @@ The blast radius if a credential leaks depends on what reads it.
 |---|---|---|
 | `DATABASE_URL` | biga-mcp `src/db.ts`; Biga Technical scripts | Full read + write to all recipes, ingredients, all tables |
 | `SUPABASE_SERVICE_ROLE_KEY` | biga-mcp `src/storage-client.ts` (via `update_recipe_image`) | Bypasses row-level security; full Supabase REST + Storage admin |
-| `MCP_API_KEY_READ` | `lib/mcp-transport.ts` (frontend) sends; biga-mcp `src/index.ts` validates | Read all recipes via Railway — but the site is public anyway, so realistically: rate-limit abuse |
-| `MCP_API_KEY_WRITE` | biga-mcp `src/index.ts` validates; sent by the "Biga content" cloud environment proxy, MCP clients, and manual `curl` | Create, update, publish, modify any recipe |
+| `MCP_API_KEY_READ` | `lib/mcp-transport.ts` (frontend) sends; biga-mcp `src/auth.ts` validates | Read all recipes via Railway — but the site is public anyway, so realistically: rate-limit abuse |
+| `MCP_API_KEY_WRITE` | biga-mcp `src/auth.ts` validates; sent by the "Biga content" cloud environment proxy, MCP clients, and manual `curl` | Create, update, publish, modify any recipe |
 | `INDEXNOW_SUBMIT_KEY` | `app/api/indexnow/route.ts` validates; biga-mcp `src/hooks/notify-indexnow.ts` sends | Trigger unwanted IndexNow submissions for our own URLs (low impact) |
 | `SENTRY_AUTH_TOKEN` | Sentry build plugin in `next.config.ts` | Upload arbitrary source maps to your Sentry project |
 | `ANTHROPIC_API_KEY` | Biga Technical `src/services/parser.ts`, `src/scripts/execute-import.ts` | Spend on our Anthropic account |
