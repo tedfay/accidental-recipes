@@ -1,6 +1,6 @@
 # Accidental Recipes — Frontend CLAUDE.md
 
-Last updated: 2026-10-28
+Last updated: 2026-11-25
 
 > Read this file completely before writing any code, creating any files,
 > or running any commands. These are constraints, not suggestions.
@@ -540,7 +540,7 @@ set 3 env vars. No code changes needed.
 | 2FI-102 | "What is this?" guided tour | Audience selector with contextual overlays |
 | 2FI-124 | `get_seo_metadata` Wikidata enrichment | Backend fix — parallel track, do not compensate in frontend |
 | — | Ingredient graph / natural language search | See roadmap doc in Linear |
-| — | Identity / login / personalization | Phase 3+ |
+| 2FI-763 | Identity / login / personalization | Phase 3+. Reader login brings `visibility: private` (members-only content), decided 2026-11-25 |
 | — | Metric unit toggle | Structure supports it; UI not required yet |
 | — | HTTP MCP transport | **RESOLVED** (2FI-100, Session 9) — Railway + /tools/call |
 | — | Static generation / generateStaticParams | HTTP transport resolved; generateStaticParams can now be implemented |
